@@ -6,7 +6,9 @@ import Dashboard from '../screens/Dashboard';
 import NewCustomerPage from '../screens/NewCustomerPage';
 import CustomerDetailsPage from '../screens/CustomerDetailsPage';
 import EditAppointmentPage from '../screens/EditAppointmentPage';
+import EnquiryDetailsPage from '../screens/EnquiryDetailsPage';
 import EnquiryPage from '../screens/EnquiryPage';
+import AddAppointmentPage from '../screens/AddAppointmentPage';
 import AddEnquiryPage from '../screens/AddEnquiryPage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -32,6 +34,8 @@ const EnquiryStack = () => {
     <Stack.Navigator>
       <Stack.Screen name="EnquiryPage" component={EnquiryPage} options={{ headerShown: false }} />
       <Stack.Screen name="AddEnquiryPage" component={AddEnquiryPage} options={{ title: 'Add Enquiry' }} />
+      <Stack.Screen name="EnquiryDetailsPage" component={EnquiryDetailsPage} options={{ title: 'Enquiry Details' }} />
+      <Stack.Screen name="AddAppointmentPage" component={AddAppointmentPage} options={{ title: 'Add Appointment' }} />
     </Stack.Navigator>
   );
 };
@@ -55,6 +59,7 @@ const MainNavigator = () => {
           },
           tabBarActiveTintColor: 'tomato',
           tabBarInactiveTintColor: 'gray',
+          unmountOnBlur: true, // This will reset the stack when switching tabs
         })}
       >
         <Tab.Screen name="Dashboard" component={DashboardStack} />

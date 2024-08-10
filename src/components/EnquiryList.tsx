@@ -33,7 +33,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({ type }) => {
           <List.Item
             title={enquiry.name}
             description={`Tenure: ${enquiry.tenure}, Rent: ${enquiry.rent}, Deposit: ${enquiry.deposit}`}
-            onPress={() => navigation.navigate('EnquiryDetails', { id: enquiry.id })}
+            onPress={() => navigation.navigate('EnquiryDetailsPage', { id: enquiry.id })}
             right={() => <Text style={styles.status}>{enquiry.status}</Text>}
           />
           <Divider />
