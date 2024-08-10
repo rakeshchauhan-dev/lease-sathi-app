@@ -31,7 +31,6 @@ const MainNavigator = () => {
           options={{
             headerLeft: () => (
               <Image
-                source={require('../assets/logo.png')}  // Replace with your logo path
                 style={{ width: 40, height: 40, marginLeft: 10 }}
                 resizeMode="contain"
               />
@@ -56,7 +55,6 @@ const MainNavigator = () => {
           options={{
             headerLeft: () => (
               <Image
-                source={require('../assets/logo.png')}
                 style={{ width: 40, height: 40, marginLeft: 10 }}
                 resizeMode="contain"
               />
@@ -81,7 +79,6 @@ const MainNavigator = () => {
           options={{
             headerLeft: () => (
               <Image
-                source={require('../assets/logo.png')}
                 style={{ width: 40, height: 40, marginLeft: 10 }}
                 resizeMode="contain"
               />
@@ -106,7 +103,6 @@ const MainNavigator = () => {
           options={{
             headerLeft: () => (
               <Image
-                source={require('../assets/logo.png')}
                 style={{ width: 40, height: 40, marginLeft: 10 }}
                 resizeMode="contain"
               />
