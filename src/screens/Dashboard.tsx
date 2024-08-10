@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button, Title, Divider, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import Feather from 'react-native-vector-icons/Feather';
+
 
 import CustomerList from '../components/CustomerList';
 
@@ -13,12 +15,11 @@ const Dashboard = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Title style={styles.title}>Dashboard</Title>
-        <IconButton
-          icon="plus-circle-outline"
-          size={30}
-          color="blue"
+        <Feather
+          name="plus-circle"
+          size={30}  // You can adjust the size if needed
+          color="purple"  // Adjust the color to ensure visibility
           onPress={() => navigation.navigate('NewCustomer')}
-          style={styles.addButton}
         />
       </View>
       <Divider />
