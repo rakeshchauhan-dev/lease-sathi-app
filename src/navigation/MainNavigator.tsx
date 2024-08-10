@@ -1,126 +1,65 @@
 import React from 'react';
-import { Image, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Dashboard from '../screens/Dashboard';
-import CustomerDetailsPage from '../screens/CustomerDetailsPage';
 import NewCustomerPage from '../screens/NewCustomerPage';
+import CustomerDetailsPage from '../screens/CustomerDetailsPage';
 import EditAppointmentPage from '../screens/EditAppointmentPage';
-import LoginScreen from '../screens/LoginScreen';
+import EnquiryPage from '../screens/EnquiryPage';
+import AddEnquiryPage from '../screens/AddEnquiryPage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
+const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
+// Create a stack navigator for the Dashboard tab
+const DashboardStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="DashboardMain" component={Dashboard} options={{ headerShown: false }} />
+      <Stack.Screen name="NewCustomerPage" component={NewCustomerPage} options={{ title: 'New Customer' }} />
+      <Stack.Screen name="CustomerDetailsPage" component={CustomerDetailsPage} options={{ title: 'Customer Details' }} />
+      <Stack.Screen name="EditAppointmentPage" component={EditAppointmentPage} options={{ title: 'Edit Appointment' }} />
+    </Stack.Navigator>
+  );
+};
+
+
+// Create a stack navigator for the Enquiry tab
+const EnquiryStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="EnquiryPage" component={EnquiryPage} options={{ headerShown: false }} />
+      <Stack.Screen name="AddEnquiryPage" component={AddEnquiryPage} options={{ title: 'Add Enquiry' }} />
+    </Stack.Navigator>
+  );
+};
 
 const MainNavigator = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
-        {/* Login screen without logo or search button */}
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{
-            headerShown: false,  // Alternatively, you can hide the entire header on the login screen
-          }}
-        />
+      <Tab.Navigator
+        initialRouteName="Dashboard"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ color, size }) => {
+            let iconName;
 
-        {/* Screens with logo and search button */}
-        <Stack.Screen
-          name="Dashboard"
-          component={Dashboard}
-          options={{
-            headerLeft: () => (
-              <Image
-                style={{ width: 40, height: 40, marginLeft: 10 }}
-                resizeMode="contain"
-              />
-            ),
-            headerRight: () => (
-              <TouchableOpacity onPress={() => console.log('Search button pressed')}>
-                <Ionicons
-                  name="search"
-                  size={24}
-                  color="black"
-                  style={{ marginRight: 15 }}
-                />
-              </TouchableOpacity>
-            ),
-            headerTitleAlign: 'center',
-          }}
-        />
+            if (route.name === 'Dashboard') {
+              iconName = 'home';
+            } else if (route.name === 'Enquiry') {
+              iconName = 'search';
+            }
 
-        <Stack.Screen
-          name="CustomerDetails"
-          component={CustomerDetailsPage}
-          options={{
-            headerLeft: () => (
-              <Image
-                style={{ width: 40, height: 40, marginLeft: 10 }}
-                resizeMode="contain"
-              />
-            ),
-            headerRight: () => (
-              <TouchableOpacity onPress={() => console.log('Search button pressed')}>
-                <Ionicons
-                  name="search"
-                  size={24}
-                  color="black"
-                  style={{ marginRight: 15 }}
-                />
-              </TouchableOpacity>
-            ),
-            headerTitleAlign: 'center',
-          }}
-        />
-
-        <Stack.Screen
-          name="NewCustomer"
-          component={NewCustomerPage}
-          options={{
-            headerLeft: () => (
-              <Image
-                style={{ width: 40, height: 40, marginLeft: 10 }}
-                resizeMode="contain"
-              />
-            ),
-            headerRight: () => (
-              <TouchableOpacity onPress={() => console.log('Search button pressed')}>
-                <Ionicons
-                  name="search"
-                  size={24}
-                  color="black"
-                  style={{ marginRight: 15 }}
-                />
-              </TouchableOpacity>
-            ),
-            headerTitleAlign: 'center',
-          }}
-        />
-
-        <Stack.Screen
-          name="EditAppointment"
-          component={EditAppointmentPage}
-          options={{
-            headerLeft: () => (
-              <Image
-                style={{ width: 40, height: 40, marginLeft: 10 }}
-                resizeMode="contain"
-              />
-            ),
-            headerRight: () => (
-              <TouchableOpacity onPress={() => console.log('Search button pressed')}>
-                <Ionicons
-                  name="search"
-                  size={24}
-                  color="black"
-                  style={{ marginRight: 15 }}
-                />
-              </TouchableOpacity>
-            ),
-            headerTitleAlign: 'center',
-          }}
-        />
-      </Stack.Navigator>
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: 'tomato',
+          tabBarInactiveTintColor: 'gray',
+        })}
+      >
+        <Tab.Screen name="Dashboard" component={DashboardStack} />
+        <Tab.Screen name="Enquiry" component={EnquiryStack} />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 };

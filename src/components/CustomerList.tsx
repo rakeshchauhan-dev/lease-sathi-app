@@ -33,7 +33,7 @@ const CustomerList: React.FC<CustomerListProps> = ({ type }) => {
           <List.Item
             title={customer.name}
             description={`${customer.appointmentDate} - ${customer.reason}`}
-            onPress={() => navigation.navigate('CustomerDetails', { id: customer.id })}
+            onPress={() => navigation.navigate('CustomerDetailsPage', { id: customer.id })}
             right={() => <Text style={styles.status}>{customer.status}</Text>}
           />
           <Divider />

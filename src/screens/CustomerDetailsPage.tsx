@@ -77,7 +77,7 @@ const CustomerDetailsPage = () => {
         {customer.appointmentDate && (
           <Button
             mode="contained"
-            onPress={() => navigation.navigate('EditAppointment', {
+            onPress={() => navigation.navigate('EditAppointmentPage', {
               appointmentDate: customer.appointmentDate,
               appointmentTime: customer.appointmentTime,
               employeeId: customer.employeeId,

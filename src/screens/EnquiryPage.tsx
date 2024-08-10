@@ -1,46 +1,45 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, Title, Divider, IconButton } from 'react-native-paper';
+import { Button, Title, Divider } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 
+import EnquiryList from '../components/EnquiryList';
 
-import CustomerList from '../components/CustomerList';
-
-const Dashboard = () => {
-  const [selectedList, setSelectedList] = useState<'new' | 'upcoming'>('new');
+const EnquiryPage = () => {
+  const [selectedList, setSelectedList] = useState<'pending' | 'confirmed'>('pending');
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Title style={styles.title}>Dashboard</Title>
+        <Title style={styles.title}>Enquiry Dashboard</Title>
         <Feather
           name="plus-circle"
-          size={30}  // You can adjust the size if needed
+          size={30}  // Adjust the size if needed
           color="purple"  // Adjust the color to ensure visibility
-          onPress={() => navigation.navigate('NewCustomerPage')}
+          onPress={() => navigation.navigate('AddEnquiryPage')}
         />
       </View>
       <Divider />
       <View style={styles.buttonContainer}>
         <Button
-          mode={selectedList === 'new' ? 'contained' : 'outlined'}
-          onPress={() => setSelectedList('new')}
+          mode={selectedList === 'pending' ? 'contained' : 'outlined'}
+          onPress={() => setSelectedList('pending')}
           style={styles.button}
         >
-          New
+          Pending
         </Button>
         <Button
-          mode={selectedList === 'upcoming' ? 'contained' : 'outlined'}
-          onPress={() => setSelectedList('upcoming')}
+          mode={selectedList === 'confirmed' ? 'contained' : 'outlined'}
+          onPress={() => setSelectedList('confirmed')}
           style={styles.button}
         >
-          Upcoming
+          Confirmed
         </Button>
       </View>
       <Divider />
-      <CustomerList type={selectedList} />
+      <EnquiryList type={selectedList} />
     </View>
   );
 };
@@ -72,4 +71,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Dashboard;
+export default EnquiryPage;
