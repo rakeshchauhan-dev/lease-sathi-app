@@ -3,13 +3,14 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Dashboard from '../screens/Dashboard';
-import NewCustomerPage from '../screens/NewCustomerPage';
-import CustomerDetailsPage from '../screens/CustomerDetailsPage';
-import EditAppointmentPage from '../screens/EditAppointmentPage';
-import EnquiryDetailsPage from '../screens/EnquiryDetailsPage';
-import EnquiryPage from '../screens/EnquiryPage';
-import AddAppointmentPage from '../screens/AddAppointmentPage';
-import AddEnquiryPage from '../screens/AddEnquiryPage';
+import NewCustomerPage from '../screens/customer/NewCustomerPage.tsx';
+import CustomerDetailsPage from '../screens/customer/CustomerDetailsPage.tsx';
+import EditAppointmentPage from '../screens/appointment/EditAppointmentPage.tsx';
+import EnquiryDetailsPage from '../screens/enquiry/EnquiryDetailsPage.tsx';
+import EnquiryPage from '../screens/enquiry/EnquiryPage.tsx';
+import AddAppointmentPage from '../screens/appointment/AddAppointmentPage.tsx';
+import CreateDraft from '../screens/CreateDraft';
+import AddEnquiryPage from '../screens/enquiry/AddEnquiryPage.tsx';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
@@ -36,6 +37,7 @@ const EnquiryStack = () => {
       <Stack.Screen name="AddEnquiryPage" component={AddEnquiryPage} options={{ title: 'Add Enquiry' }} />
       <Stack.Screen name="EnquiryDetailsPage" component={EnquiryDetailsPage} options={{ title: 'Enquiry Details' }} />
       <Stack.Screen name="AddAppointmentPage" component={AddAppointmentPage} options={{ title: 'Add Appointment' }} />
+      <Stack.Screen name="CreateDraft" component={CreateDraft} options={{ title: 'Create Draft' }} />
     </Stack.Navigator>
   );
 };

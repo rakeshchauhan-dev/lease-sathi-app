@@ -4,7 +4,7 @@ import { Button, Title, Divider } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import Feather from 'react-native-vector-icons/Feather';
 
-import EnquiryList from '../components/EnquiryList';
+import EnquiryList from '../../components/EnquiryList.tsx';
 
 const EnquiryPage = () => {
   const [selectedList, setSelectedList] = useState<'pending' | 'confirmed'>('pending');

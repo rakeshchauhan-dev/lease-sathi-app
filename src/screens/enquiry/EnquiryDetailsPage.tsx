@@ -81,7 +81,7 @@ const EnquiryDetailsPage = () => {
         </Card.Content>
         <Button
           mode="contained"
-          onPress={() => navigation.navigate('AddAppointmentPage', { enquiryId: enquiry.id })}
+          onPress={() => navigation.navigate('CreateDraft', { enquiryId: enquiry.id })}
           style={styles.button}
           contentStyle={styles.buttonContent}
         >
