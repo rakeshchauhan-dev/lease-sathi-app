@@ -15,12 +15,7 @@ const Dashboard = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Title style={styles.title}>Dashboard</Title>
-        <Feather
-          name="plus-circle"
-          size={30}  // You can adjust the size if needed
-          color="purple"  // Adjust the color to ensure visibility
-          onPress={() => navigation.navigate('NewCustomerPage')}
-        />
+        
       </View>
       <Divider />
       <View style={styles.buttonContainer}>

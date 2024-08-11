@@ -23,6 +23,7 @@ const DashboardStack = () => {
       <Stack.Screen name="DashboardMain" component={Dashboard} options={{ headerShown: false }} />
       <Stack.Screen name="NewCustomerPage" component={NewCustomerPage} options={{ title: 'New Customer' }} />
       <Stack.Screen name="CustomerDetailsPage" component={CustomerDetailsPage} options={{ title: 'Customer Details' }} />
+      <Stack.Screen name="AddAppointmentPage" component={AddAppointmentPage} options={{ title: 'Add Appointment' }} />
       <Stack.Screen name="EditAppointmentPage" component={EditAppointmentPage} options={{ title: 'Edit Appointment' }} />
     </Stack.Navigator>
   );
@@ -36,7 +37,6 @@ const EnquiryStack = () => {
       <Stack.Screen name="EnquiryPage" component={EnquiryPage} options={{ headerShown: false }} />
       <Stack.Screen name="AddEnquiryPage" component={AddEnquiryPage} options={{ title: 'Add Enquiry' }} />
       <Stack.Screen name="EnquiryDetailsPage" component={EnquiryDetailsPage} options={{ title: 'Enquiry Details' }} />
-      <Stack.Screen name="AddAppointmentPage" component={AddAppointmentPage} options={{ title: 'Add Appointment' }} />
       <Stack.Screen name="CreateDraft" component={CreateDraft} options={{ title: 'Create Draft' }} />
     </Stack.Navigator>
   );
