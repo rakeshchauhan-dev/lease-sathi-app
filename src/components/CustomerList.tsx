@@ -7,7 +7,7 @@ interface Customer {
   id: number;
   name: string;
   type: string; // "new" or "upcoming"
-  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Biometric done' | 'Challan paid' | 'Doc submitted';
+  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Appointment' | 'Challan to be Paid' | 'Doc submitted';
   appointmentDate: string;
   reason: string;
   mobile: string;
@@ -74,7 +74,7 @@ const customers: Customer[] = [
     id: 5,
     name: 'Mark Taylor',
     type: 'new',
-    status: 'Biometric done',
+    status: 'Appointment',
     appointmentDate: '2024-08-20',
     reason: 'Identity verification',
     mobile: '6666666666',
@@ -87,7 +87,7 @@ const customers: Customer[] = [
     id: 6,
     name: 'Emily Davis',
     type: 'new',
-    status: 'Challan paid',
+    status: 'Challan to be Paid',
     appointmentDate: '2024-08-25',
     reason: 'Fee payment',
     mobile: '8888888888',

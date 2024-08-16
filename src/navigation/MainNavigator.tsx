@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Dashboard from '../screens/Dashboard';
 import NewCustomerPage from '../screens/customer/NewCustomerPage.tsx';
 import CustomerDetailsPage from '../screens/customer/CustomerDetailsPage.tsx';
-import EditAppointmentPage from '../screens/appointment/EditAppointmentPage.tsx';
+import RescheduleAppointment from '../screens/appointment/RescheduleAppointmentPage.tsx';
 import EnquiryDetailsPage from '../screens/enquiry/EnquiryDetailsPage.tsx';
 import EnquiryPage from '../screens/enquiry/EnquiryPage.tsx';
 import AddAppointmentPage from '../screens/appointment/AddAppointmentPage.tsx';
@@ -24,7 +24,7 @@ const DashboardStack = () => {
       <Stack.Screen name="NewCustomerPage" component={NewCustomerPage} options={{ title: 'New Customer' }} />
       <Stack.Screen name="CustomerDetailsPage" component={CustomerDetailsPage} options={{ title: 'Customer Details' }} />
       <Stack.Screen name="AddAppointmentPage" component={AddAppointmentPage} options={{ title: 'Add Appointment' }} />
-      <Stack.Screen name="EditAppointmentPage" component={EditAppointmentPage} options={{ title: 'Edit Appointment' }} />
+      <Stack.Screen name="Reschedule Appointment" component={RescheduleAppointment} options={{ title: 'Reschedule Appointment' }} />
     </Stack.Navigator>
   );
 };

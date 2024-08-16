@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, Text } from 'react-native';
-import { Card, Title, Paragraph, Button } from 'react-native-paper';
+import { Card, Title, Paragraph, Button, RadioButton } from 'react-native-paper';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import DocumentPicker from 'react-native-document-picker';
+import RescheduleAppointment from '../appointment/RescheduleAppointmentPage';
 
 interface Customer {
   id: number;
@@ -13,7 +14,7 @@ interface Customer {
   appointmentDate?: string;
   appointmentTime?: string;
   employeeId?: string;
-  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Biometric done' | 'Challan paid' | 'Doc submitted';
+  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Appointment' | 'Challan to be Paid';
 }
 
 const CustomerDetailsPage = () => {
@@ -23,14 +24,16 @@ const CustomerDetailsPage = () => {
 
   const [comment, setComment] = useState('');
   const [draftFile, setDraftFile] = useState<any>(null);
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  const [amountReceived, setAmountReceived] = useState<string>('No');
+  const [amount, setAmount] = useState<string>('');
+  const [governmentFee, setGovernmentFee] = useState<string>('');
 
   const handleDocumentPick = async () => {
     try {
-      const res = await DocumentPicker.pickMultiple({
+      const res = await DocumentPicker.pick({
         type: [DocumentPicker.types.allFiles],
       });
-      setUploadedFiles(res);
+      setDraftFile(res);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User canceled the upload');
@@ -41,15 +44,19 @@ const CustomerDetailsPage = () => {
   };
 
   const handleSubmit = () => {
-    // Handle the submission logic here
-    alert('Documents submitted successfully');
-    navigation.goBack();
+    const updatedCustomer = { ...customer, status: 'Under Revision' };
+    navigation.setParams({ customer: updatedCustomer });
   };
 
   const handleApprove = () => {
     const updatedCustomer = { ...customer, status: 'Approved' };
     navigation.setParams({ customer: updatedCustomer });
     navigation.navigate('AddAppointmentPage');
+  };
+
+  const calculateTotal = () => {
+    const total = parseFloat(amount) + parseFloat(governmentFee);
+    return isNaN(total) ? '0.00' : total.toFixed(2);
   };
 
   return (
@@ -79,44 +86,40 @@ const CustomerDetailsPage = () => {
         </Card.Content>
       </Card>
 
-      {customer.status === 'Doc submitted' && (
-        <Card style={styles.card}>
-          <Card.Content>
-            <Title style={styles.title}>Document Submission</Title>
-            <Button
-              mode="outlined"
-              onPress={handleDocumentPick}
-              style={styles.uploadButton}
-              contentStyle={styles.buttonContent}
-            >
-              Upload Files
-            </Button>
-            {uploadedFiles.length > 0 && (
-              <View>
-                {uploadedFiles.map((file, index) => (
-                  <Text key={index} style={styles.fileName}>
-                    {file.name}
-                  </Text>
-                ))}
-              </View>
-            )}
-            <Button
-              mode="contained"
-              onPress={handleSubmit}
-              style={styles.button}
-              contentStyle={styles.buttonContent}
-            >
-              Submit
-            </Button>
-          </Card.Content>
-        </Card>
-      )}
-
-      {customer.status === 'Biometric done' && (
+      {customer.status === 'Challan to be Paid' && (
         <Card style={styles.card}>
           <Card.Content>
             <Title style={styles.title}>Payment Details</Title>
-            {/* Payment details form and submit button here */}
+
+            <Paragraph style={styles.label}>Amount Received from Client:</Paragraph>
+            <View style={styles.radioGroup}>
+              <View style={styles.radioButtonContainer}>
+                <RadioButton value="Yes" status={amountReceived === 'Yes' ? 'checked' : 'unchecked'} onPress={() => setAmountReceived('Yes')} />
+                <Text>Yes</Text>
+              </View>
+              <View style={styles.radioButtonContainer}>
+                <RadioButton value="No" status={amountReceived === 'No' ? 'checked' : 'unchecked'} onPress={() => setAmountReceived('No')} />
+                <Text>No</Text>
+              </View>
+            </View>
+
+            <TextInput
+              placeholder="Amount"
+              value={amount}
+              onChangeText={setAmount}
+              style={styles.input}
+              keyboardType="numeric"
+            />
+            <TextInput
+              placeholder="Government Fee"
+              value={governmentFee}
+              onChangeText={setGovernmentFee}
+              style={styles.input}
+              keyboardType="numeric"
+            />
+
+            <Paragraph style={styles.totalLabel}>Total: {calculateTotal()}</Paragraph>
+
             <Button
               mode="contained"
               onPress={handleSubmit}
@@ -199,6 +202,14 @@ const CustomerDetailsPage = () => {
           </Card.Content>
         </Card>
       )}
+
+      {customer.status === 'Appointment' && (
+        <RescheduleAppointment 
+          appointmentDate={customer.appointmentDate!} 
+          appointmentTime={customer.appointmentTime!} 
+          employeeId={customer.employeeId!} 
+        />
+      )}
     </ScrollView>
   );
 };
@@ -233,6 +244,16 @@ const styles = StyleSheet.create({
     color: '#777',
     marginBottom: 8,
   },
+  radioGroup: {
+    flexDirection: 'row',   // Make the radio buttons and text align horizontally
+    alignItems: 'center',   // Align them in the center vertically
+    marginBottom: 16,
+  },
+  radioButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 16,        // Add some spacing between the radio buttons
+  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -264,6 +285,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderRadius: 5,
+  },
+  totalLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'right',
+    marginVertical: 16,
   },
 });
 

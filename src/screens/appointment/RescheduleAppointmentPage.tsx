@@ -4,7 +4,7 @@ import { Card, TextInput, Button, Title } from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-const EditAppointmentPage = () => {
+const RescheduleAppointment = () => {
   const route = useRoute();
   const navigation = useNavigation();
   
@@ -41,7 +41,7 @@ const EditAppointmentPage = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <Card style={styles.card}>
         <Card.Content>
-          <Title style={styles.title}>Edit Appointment Details</Title>
+          <Title style={styles.title}>Reschedule</Title>
           <Button onPress={() => setDatePickerVisibility(true)} mode="outlined" style={styles.input}>
             Select Appointment Date
           </Button>
@@ -129,4 +129,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditAppointmentPage;
+export default RescheduleAppointment;
