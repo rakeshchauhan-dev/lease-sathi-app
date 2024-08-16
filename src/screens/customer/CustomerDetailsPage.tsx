@@ -3,7 +3,6 @@ import { View, StyleSheet, ScrollView, TextInput, Text } from 'react-native';
 import { Card, Title, Paragraph, Button, RadioButton } from 'react-native-paper';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import DocumentPicker from 'react-native-document-picker';
-import RescheduleAppointment from '../appointment/RescheduleAppointmentPage';
 
 interface Customer {
   id: number;
@@ -14,7 +13,7 @@ interface Customer {
   appointmentDate?: string;
   appointmentTime?: string;
   employeeId?: string;
-  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Appointment' | 'Challan to be Paid';
+  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Appointment' | 'Challan to be Paid' | 'Doc to be submitted' | 'Doc to be checked';
 }
 
 const CustomerDetailsPage = () => {
@@ -43,6 +42,13 @@ const CustomerDetailsPage = () => {
     }
   };
 
+  // Define calculateTotal function
+  const calculateTotal = () => {
+    const total = parseFloat(amount) + parseFloat(governmentFee);
+    return isNaN(total) ? '0.00' : total.toFixed(2);
+  };
+  
+
   const handleSubmit = () => {
     const updatedCustomer = { ...customer, status: 'Under Revision' };
     navigation.setParams({ customer: updatedCustomer });
@@ -54,9 +60,9 @@ const CustomerDetailsPage = () => {
     navigation.navigate('AddAppointmentPage');
   };
 
-  const calculateTotal = () => {
-    const total = parseFloat(amount) + parseFloat(governmentFee);
-    return isNaN(total) ? '0.00' : total.toFixed(2);
+  const handleDone = () => {
+    const updatedCustomer = { ...customer, status: 'Approved' }; // Assuming the status changes to 'Approved' after marking it as done
+    navigation.setParams({ customer: updatedCustomer });
   };
 
   return (
@@ -204,12 +210,77 @@ const CustomerDetailsPage = () => {
       )}
 
       {customer.status === 'Appointment' && (
-        <RescheduleAppointment 
-          appointmentDate={customer.appointmentDate!} 
-          appointmentTime={customer.appointmentTime!} 
-          employeeId={customer.employeeId!} 
-        />
+        <Card style={styles.card}>
+          <Card.Content>
+            <Title style={styles.title}>Appointment Actions</Title>
+            <View style={styles.buttonContainer}>
+              <Button
+                mode="contained"
+                onPress={() => navigation.navigate('RescheduleAppointment', { appointmentDate: customer.appointmentDate, appointmentTime: customer.appointmentTime, employeeId: customer.employeeId })}
+                style={styles.button}
+                contentStyle={styles.buttonContent}
+              >
+                Reschedule
+              </Button>
+              <Button
+                mode="contained"
+                onPress={handleDone}
+                style={[styles.button, styles.doneButton]}
+                contentStyle={styles.buttonContent}
+              >
+                Done
+              </Button>
+            </View>
+          </Card.Content>
+        </Card>
       )}
+
+      {customer.status === 'Doc to be submitted' && (
+        <Card style={styles.card}>
+          <Card.Content>
+            <Title style={styles.title}>Document Submission</Title>
+            <Button
+              mode="contained"
+              onPress={handleSubmit}
+              style={styles.button}
+              contentStyle={styles.buttonContent}
+            >
+              Submit
+            </Button>
+          </Card.Content>
+        </Card>
+      )}
+
+      {customer.status === 'Doc to be checked' && (
+        <Card style={styles.card}>
+          <Card.Content>
+            <Title style={styles.title}>Document Check</Title>
+            <Button
+              mode="outlined"
+              onPress={handleDocumentPick}
+              style={styles.uploadButton}
+              contentStyle={styles.buttonContent}
+            >
+              {draftFile ? 'Change Document' : 'Upload Document'}
+            </Button>
+            {draftFile && (
+              <Text style={styles.fileName}>
+                {draftFile.name}
+              </Text>
+            )}
+            <Button
+              mode="contained"
+              onPress={handleSubmit}
+              style={styles.button}
+              contentStyle={styles.buttonContent}
+            >
+              Submit
+            </Button>
+          </Card.Content>
+        </Card>
+      )}
+
+
     </ScrollView>
   );
 };
@@ -266,6 +337,9 @@ const styles = StyleSheet.create({
   },
   approveButton: {
     backgroundColor: '#4CAF50',  // Green shade for Approve button
+  },
+  doneButton: {
+    backgroundColor: '#2196F3',  // Blue shade for Done button
   },
   buttonContent: {
     paddingVertical: 6,

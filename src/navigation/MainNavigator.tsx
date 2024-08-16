@@ -24,7 +24,7 @@ const DashboardStack = () => {
       <Stack.Screen name="NewCustomerPage" component={NewCustomerPage} options={{ title: 'New Customer' }} />
       <Stack.Screen name="CustomerDetailsPage" component={CustomerDetailsPage} options={{ title: 'Customer Details' }} />
       <Stack.Screen name="AddAppointmentPage" component={AddAppointmentPage} options={{ title: 'Add Appointment' }} />
-      <Stack.Screen name="Reschedule Appointment" component={RescheduleAppointment} options={{ title: 'Reschedule Appointment' }} />
+      <Stack.Screen name="RescheduleAppointment" component={RescheduleAppointment} options={{ title: 'Reschedule Appointment' }} />
     </Stack.Navigator>
   );
 };
