@@ -7,6 +7,7 @@ const AddAppointmentPage = () => {
   const [appointmentDate, setAppointmentDate] = useState<Date | undefined>(undefined);
   const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(undefined);
   const [employeeId, setEmployeeId] = useState('');
+  const [address, setAddress] = useState('');
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
@@ -15,6 +16,7 @@ const AddAppointmentPage = () => {
   const [additionalAppointmentDate, setAdditionalAppointmentDate] = useState<Date | undefined>(undefined);
   const [additionalAppointmentTime, setAdditionalAppointmentTime] = useState<Date | undefined>(undefined);
   const [additionalEmployeeId, setAdditionalEmployeeId] = useState('');
+  const [additionalAddress, setAdditionalAddress] = useState('');
   const [selectedRole, setSelectedRole] = useState('Tenant');
 
   const handleConfirmDate = (date: Date) => {
@@ -38,9 +40,9 @@ const AddAppointmentPage = () => {
   };
 
   const handleSubmit = () => {
-    const newAppointment = { appointmentDate, appointmentTime, employeeId };
+    const newAppointment = { appointmentDate, appointmentTime, employeeId, address };
     const additionalAppointment = isAdditionalAppointmentVisible
-      ? { additionalAppointmentDate, additionalAppointmentTime, additionalEmployeeId, selectedRole }
+      ? { additionalAppointmentDate, additionalAppointmentTime, additionalEmployeeId, additionalAddress, selectedRole }
       : null;
 
     console.log('New Appointment:', newAppointment);
@@ -84,6 +86,14 @@ const AddAppointmentPage = () => {
             mode="outlined"
             style={styles.input}
             placeholder="Enter employee ID"
+          />
+          <TextInput
+            label="Address"
+            value={address}
+            onChangeText={setAddress}
+            mode="outlined"
+            style={styles.input}
+            placeholder="Enter address"
           />
 
           <Checkbox.Item
@@ -141,6 +151,14 @@ const AddAppointmentPage = () => {
                 mode="outlined"
                 style={styles.input}
                 placeholder="Enter additional employee ID"
+              />
+              <TextInput
+                label="Additional Address"
+                value={additionalAddress}
+                onChangeText={setAdditionalAddress}
+                mode="outlined"
+                style={styles.input}
+                placeholder="Enter additional address"
               />
             </>
           )}

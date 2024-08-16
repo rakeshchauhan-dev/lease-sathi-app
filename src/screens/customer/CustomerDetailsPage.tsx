@@ -196,14 +196,6 @@ const CustomerDetailsPage = () => {
               >
                 Submit
               </Button>
-              <Button
-                mode="contained"
-                onPress={handleApprove}
-                style={[styles.button, styles.approveButton]}
-                contentStyle={styles.buttonContent}
-              >
-                Approve
-              </Button>
             </View>
           </Card.Content>
         </Card>
