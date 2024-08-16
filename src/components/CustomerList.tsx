@@ -7,7 +7,7 @@ interface Customer {
   id: number;
   name: string;
   type: string; // "new" or "upcoming"
-  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Biometric done' | 'Challan paid';
+  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Biometric done' | 'Challan paid' | 'Doc submitted';
   appointmentDate: string;
   reason: string;
   mobile: string;
@@ -93,6 +93,17 @@ const customers: Customer[] = [
     mobile: '8888888888',
     address: '303 Birch St',
     email: 'emily.davis@example.com',
+  },
+  {
+    id: 7,
+    name: 'Michael Scott',
+    type: 'new',
+    status: 'Doc submitted',
+    appointmentDate: '2024-08-28',
+    reason: 'Final document submission',
+    mobile: '7777777777',
+    address: '404 Maple St',
+    email: 'michael.scott@example.com',
   }
 ];
 
