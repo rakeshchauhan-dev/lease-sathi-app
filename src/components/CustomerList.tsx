@@ -7,7 +7,7 @@ interface Customer {
   id: number;
   name: string;
   type: string; // "new" or "upcoming"
-  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved';
+  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Biometric done' | 'Challan paid';
   appointmentDate: string;
   reason: string;
   mobile: string;
@@ -28,7 +28,7 @@ const customers: Customer[] = [
     type: 'new', 
     status: 'Awaiting Feedback', 
     appointmentDate: '2024-08-10', 
-    reason: 'Rent date are not proper',
+    reason: 'Rent dates are not proper',
     mobile: '1234567890',
     address: '123 Main St',
     email: 'john.doe@example.com',
@@ -54,7 +54,7 @@ const customers: Customer[] = [
     type: 'new', 
     status: 'Under Revision', 
     appointmentDate: '2024-08-15', 
-    reason: 'Naming issue ',
+    reason: 'Naming issue',
     mobile: '5555555555',
     address: '789 Oak St',
     email: 'sam.johnson@example.com',
@@ -69,6 +69,30 @@ const customers: Customer[] = [
     mobile: '7777777777',
     address: '101 Pine St',
     email: 'alice.brown@example.com',
+  },
+  {
+    id: 5,
+    name: 'Mark Taylor',
+    type: 'new',
+    status: 'Biometric done',
+    appointmentDate: '2024-08-20',
+    reason: 'Identity verification',
+    mobile: '6666666666',
+    address: '202 Cedar St',
+    email: 'mark.taylor@example.com',
+    appointmentTime: '11:00 AM',
+    employeeId: 'E125',
+  },
+  {
+    id: 6,
+    name: 'Emily Davis',
+    type: 'new',
+    status: 'Challan paid',
+    appointmentDate: '2024-08-25',
+    reason: 'Fee payment',
+    mobile: '8888888888',
+    address: '303 Birch St',
+    email: 'emily.davis@example.com',
   }
 ];
 

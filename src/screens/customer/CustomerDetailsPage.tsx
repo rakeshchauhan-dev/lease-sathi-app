@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, Text } from 'react-native';
-import { Card, Title, Paragraph, Button } from 'react-native-paper';
+import { Card, Title, Paragraph, Button, RadioButton } from 'react-native-paper';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import DocumentPicker from 'react-native-document-picker';
 
@@ -13,16 +13,19 @@ interface Customer {
   appointmentDate?: string;
   appointmentTime?: string;
   employeeId?: string;
-  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved';
+  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Biometric done';
 }
 
 const CustomerDetailsPage = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { customer } = route.params as { customer: Customer };
-  
+
   const [comment, setComment] = useState('');
   const [draftFile, setDraftFile] = useState<any>(null);
+  const [amountReceived, setAmountReceived] = useState<string>('No');
+  const [amount, setAmount] = useState<string>('');
+  const [governmentFee, setGovernmentFee] = useState<string>('');
 
   const handleDocumentPick = async () => {
     try {
@@ -48,6 +51,11 @@ const CustomerDetailsPage = () => {
     const updatedCustomer = { ...customer, status: 'Approved' };
     navigation.setParams({ customer: updatedCustomer });
     navigation.navigate('AddAppointmentPage');
+  };
+
+  const calculateTotal = () => {
+    const total = parseFloat(amount) + parseFloat(governmentFee);
+    return isNaN(total) ? '0.00' : total.toFixed(2);
   };
 
   return (
@@ -76,6 +84,54 @@ const CustomerDetailsPage = () => {
           )}
         </Card.Content>
       </Card>
+
+      {customer.status === 'Biometric done' && (
+        <Card style={styles.card}>
+          <Card.Content>
+            <Title style={styles.title}>Payment Details</Title>
+
+            <Paragraph style={styles.label}>Amount Received from Client:</Paragraph>
+            <RadioButton.Group onValueChange={value => setAmountReceived(value)} value={amountReceived}>
+              <View style={styles.radioGroup}>
+                <View style={styles.radioButtonContainer}>
+                  <RadioButton value="Yes" />
+                  <Text>Yes</Text>
+                </View>
+                <View style={styles.radioButtonContainer}>
+                  <RadioButton value="No" />
+                  <Text>No</Text>
+                </View>
+              </View>
+            </RadioButton.Group>
+
+            <TextInput
+              placeholder="Amount"
+              value={amount}
+              onChangeText={setAmount}
+              style={styles.input}
+              keyboardType="numeric"
+            />
+            <TextInput
+              placeholder="Government Fee"
+              value={governmentFee}
+              onChangeText={setGovernmentFee}
+              style={styles.input}
+              keyboardType="numeric"
+            />
+
+            <Paragraph style={styles.totalLabel}>Total: {calculateTotal()}</Paragraph>
+
+            <Button
+              mode="contained"
+              onPress={handleSubmit}
+              style={styles.button}
+              contentStyle={styles.buttonContent}
+            >
+              Submit
+            </Button>
+          </Card.Content>
+        </Card>
+      )}
 
       {customer.status === 'Awaiting Feedback' && (
         <Card style={styles.card}>
@@ -181,6 +237,15 @@ const styles = StyleSheet.create({
     color: '#777',
     marginBottom: 8,
   },
+  radioGroup: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  radioButtonContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -212,6 +277,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     borderRadius: 5,
+  },
+  totalLabel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'right',
+    marginVertical: 16,
   },
 });
 
