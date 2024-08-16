@@ -163,7 +163,7 @@ const CustomerDetailsPage = () => {
                 style={[styles.button, styles.approveButton]}
                 contentStyle={styles.buttonContent}
               >
-                Approve
+                Appointment
               </Button>
             </View>
           </Card.Content>
