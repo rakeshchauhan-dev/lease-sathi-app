@@ -1,43 +1,50 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { TextInput, Button, Title } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import config from '../config'; // Adjust the path as necessary
 
-const LoginScreen = () => {
-  const [username, setUsername] = useState('');
+const LoginScreen = ({ navigation }) => {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation();
 
-  const handleLogin = () => {
-    // Add your login logic here
-    if (username === 'admin' && password === 'password') {
-      navigation.navigate('Dashboard');
-    } else {
-      alert('Invalid credentials');
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(config.LOGIN_URL, {
+        email,
+        password,
+      });
+
+      const { token } = response.data;
+      await AsyncStorage.setItem('authToken', token);
+
+      // Navigate to the main app
+      navigation.replace('MainApp');
+    } catch (error) {
+      console.error('Error during login:', error);
+      Alert.alert('Login Failed', 'An error occurred during login.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Title style={styles.title}>Login</Title>
+      <Text style={styles.title}>Login</Text>
       <TextInput
-        label="Username"
-        value={username}
-        onChangeText={setUsername}
-        mode="outlined"
         style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       <TextInput
-        label="Password"
+        style={styles.input}
+        placeholder="Password"
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        mode="outlined"
-        style={styles.input}
       />
-      <Button mode="contained" onPress={handleLogin} style={styles.button}>
-        Login
-      </Button>
+      <Button title="Login" onPress={handleLogin} />
     </View>
   );
 };
@@ -46,17 +53,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 16,
+    padding: 20,
   },
   title: {
-    textAlign: 'center',
+    fontSize: 24,
     marginBottom: 20,
+    textAlign: 'center',
   },
   input: {
-    marginBottom: 16,
-  },
-  button: {
-    marginTop: 16,
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
   },
 });
 
