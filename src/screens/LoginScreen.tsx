@@ -15,8 +15,7 @@ const LoginScreen = ({ navigation }) => {
     }
   
     try {
-      console.log('Email:', email);
-      console.log('Password:', password);
+      console.log('Attempting login with Email:', email);
   
       const response = await axios.post(config.LOGIN_URL, {
         email,
@@ -30,7 +29,8 @@ const LoginScreen = ({ navigation }) => {
         await AsyncStorage.setItem('authToken', token);
   
         // Navigate to the main app
-        navigation.replace('MainApp');
+        console.log('Login successful, navigating to DashboardMain');
+        navigation.replace('DashboardMain'); // Make sure this matches the screen name
       } else {
         Alert.alert('Login Failed', 'Invalid login credentials.');
       }
@@ -39,6 +39,7 @@ const LoginScreen = ({ navigation }) => {
       Alert.alert('Login Failed', 'An error occurred during login.');
     }
   };
+  
   
 
   return (

@@ -15,6 +15,8 @@ import AddAppointmentPage from '../screens/appointment/AddAppointmentPage';
 import CreateDraft from '../screens/CreateDraft';
 import AddEnquiryPage from '../screens/enquiry/AddEnquiryPage';
 import LoginScreen from '../screens/LoginScreen';
+import { View, ActivityIndicator, Text } from 'react-native';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -63,14 +65,29 @@ const MainTabNavigator = () => (
 
 const MainNavigator = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
-      const token = await AsyncStorage.getItem('authToken');
-      setIsAuthenticated(!!token);
+      try {
+        const token = await AsyncStorage.getItem('authToken');
+        setIsAuthenticated(!!token);
+      } catch (error) {
+        console.error('Failed to check authentication status:', error);
+      } finally {
+        setLoading(false); // Ensure loading is set to false
+      }
     };
     checkAuthStatus();
   }, []);
+  
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   return (
     <NavigationContainer>
