@@ -74,15 +74,13 @@ const MainNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {isAuthenticated ? (
-          <Stack.Screen name="MainApp" component={MainTabNavigator} />
-        ) : (
-          <Stack.Screen name="Login" component={LoginScreen} />
-        )}
+      <Stack.Navigator initialRouteName={isAuthenticated ? "DashboardMain" : "Login"} screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="DashboardMain" component={MainTabNavigator} />
+        <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
+
 
 export default MainNavigator;

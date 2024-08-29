@@ -9,22 +9,37 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Validation Error', 'Please enter both email and password.');
+      return;
+    }
+  
     try {
+      console.log('Email:', email);
+      console.log('Password:', password);
+  
       const response = await axios.post(config.LOGIN_URL, {
         email,
         password,
       });
-
-      const { token } = response.data;
-      await AsyncStorage.setItem('authToken', token);
-
-      // Navigate to the main app
-      navigation.replace('MainApp');
+  
+      console.log('API Response:', response.data);
+  
+      if (response.data && response.data.token) {
+        const { token } = response.data;
+        await AsyncStorage.setItem('authToken', token);
+  
+        // Navigate to the main app
+        navigation.replace('MainApp');
+      } else {
+        Alert.alert('Login Failed', 'Invalid login credentials.');
+      }
     } catch (error) {
       console.error('Error during login:', error);
       Alert.alert('Login Failed', 'An error occurred during login.');
     }
   };
+  
 
   return (
     <View style={styles.container}>

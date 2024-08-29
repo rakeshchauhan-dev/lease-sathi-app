@@ -1,21 +1,63 @@
-import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { Button, Title, Divider, IconButton } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import { Button, Title, Divider } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import Feather from 'react-native-vector-icons/Feather';
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axiosInstance from '../axiosInstance'; // Adjust the path if necessary
 import CustomerList from '../components/CustomerList';
 
 const Dashboard = () => {
   const [selectedList, setSelectedList] = useState<'new' | 'upcoming'>('new');
+  const [customerList, setCustomerList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchCustomerList = async () => {
+      try {
+        const response = await axiosInstance.get('/customerlist');
+        setCustomerList(response.data);
+      } catch (err) {
+        console.error('Failed to fetch customer list:', err);
+        setError('Failed to load customer list.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomerList();
+  }, []);
+
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('authToken'); // Remove the token from storage
+    navigation.replace('Login'); // Navigate back to the login screen
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Loading customers...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Title style={styles.title}>Dashboard</Title>
-        
+        <Button mode="contained" onPress={handleLogout} style={styles.logoutButton}>
+          Logout
+        </Button>
       </View>
       <Divider />
       <View style={styles.buttonContainer}>
@@ -35,7 +77,7 @@ const Dashboard = () => {
         </Button>
       </View>
       <Divider />
-      <CustomerList type={selectedList} />
+      <CustomerList type={selectedList} customers={customerList} />
     </View>
   );
 };
@@ -53,8 +95,8 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
   },
-  addButton: {
-    marginRight: -10,
+  logoutButton: {
+    marginLeft: 8,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -64,6 +106,16 @@ const styles = StyleSheet.create({
   button: {
     flex: 1,
     marginHorizontal: 8,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
