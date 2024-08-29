@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from '../config'; // Adjust the path as necessary
@@ -7,6 +7,8 @@ import config from '../config'; // Adjust the path as necessary
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -14,6 +16,7 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
   
+    setLoading(true);
     try {
       console.log('Attempting login with Email:', email);
   
@@ -36,12 +39,12 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.error('Error during login:', error);
-      Alert.alert('Login Failed', 'An error occurred during login.');
+      Alert.alert('Login Failed', 'An error occurred during login. Please check your network and try again.');
+    } finally {
+      setLoading(false);
     }
   };
   
-  
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
@@ -53,14 +56,26 @@ const LoginScreen = ({ navigation }) => {
         keyboardType="email-address"
         autoCapitalize="none"
       />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <Button title="Login" onPress={handleLogin} />
+      <View style={styles.passwordContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry={!showPassword}
+        />
+        <TouchableOpacity
+          style={styles.togglePassword}
+          onPress={() => setShowPassword(!showPassword)}
+        >
+          <Text>{showPassword ? 'Hide' : 'Show'}</Text>
+        </TouchableOpacity>
+      </View>
+      {loading ? (
+        <ActivityIndicator size="small" color="#0000ff" />
+      ) : (
+        <Button title="Login" onPress={handleLogin} />
+      )}
     </View>
   );
 };
@@ -82,6 +97,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  togglePassword: {
+    position: 'absolute',
+    right: 10,
+    height: 40,
+    justifyContent: 'center',
   },
 });
 

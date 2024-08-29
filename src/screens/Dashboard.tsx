@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance from '../axiosInstance'; // Adjust the path if necessary
 import CustomerList from '../components/CustomerList';
+import config from '../config'; // Adjust the path as necessary
+import axios from 'axios';
 
 const Dashboard = () => {
   const [selectedList, setSelectedList] = useState<'new' | 'upcoming'>('new');
@@ -15,8 +17,22 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchCustomerList = async () => {
+      setLoading(true);
       try {
-        const response = await axiosInstance.get('/customerlist');
+        const token = await AsyncStorage.getItem('authToken');
+        if (!token) {
+          setError('Authentication token not found.');
+          return;
+        }
+
+        const response = await axios.get(config.CUSTOMERS_URL, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log(response.data)
+
         setCustomerList(response.data);
       } catch (err) {
         console.error('Failed to fetch customer list:', err);
