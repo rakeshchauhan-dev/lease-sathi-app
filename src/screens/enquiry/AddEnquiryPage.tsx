@@ -10,7 +10,7 @@ const AddEnquiryPage = () => {
   const navigation = useNavigation();
 
   const [name, setName] = useState('');
-  const [mobile, setMobile] = useState('');
+  const [mobileNo, setMobile] = useState('');
   const [address, setAddress] = useState('');
   const [tenure, setTenure] = useState('');
   const [rent, setRent] = useState('');
@@ -24,14 +24,14 @@ const AddEnquiryPage = () => {
     setLoading(true);
     const newEnquiry = {
       name,
-      mobile,
+      mobileNo,
       address,
       tenure,
-      rent,
-      deposit,
-      increment,
+      rent :parseFloat(rent),
+      deposit: parseFloat(deposit),
+      increment: parseFloat(increment),
       extraService,
-      quoted,
+      quoted: parseFloat(quoted),
     };
 
     try {
@@ -80,7 +80,7 @@ const AddEnquiryPage = () => {
           />
           <TextInput
             label="Mobile No"
-            value={mobile}
+            value={mobileNo}
             onChangeText={setMobile}
             mode="outlined"
             style={styles.input}

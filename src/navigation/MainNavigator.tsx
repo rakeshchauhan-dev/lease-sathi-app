@@ -50,7 +50,10 @@ const MainTabNavigator = () => (
           iconName = 'home';
         } else if (route.name === 'Enquiry') {
           iconName = 'search';
+        } else if (route.name === 'Customer') {
+          iconName = 'person';
         }
+        
         return <Ionicons name={iconName} size={size} color={color} />;
       },
       tabBarActiveTintColor: 'tomato',
@@ -60,6 +63,7 @@ const MainTabNavigator = () => (
   >
     <Tab.Screen name="Dashboard" component={DashboardStack} />
     <Tab.Screen name="Enquiry" component={EnquiryStack} />
+    <Tab.Screen name="Customer" component={EnquiryStack} />
   </Tab.Navigator>
 );
 

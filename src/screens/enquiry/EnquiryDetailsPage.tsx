@@ -1,13 +1,24 @@
-import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { Card, Title, Paragraph, Button } from 'react-native-paper';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import config from '../../config';
+import axiosInstance from '../../axiosInstance';
+
+
+interface Address {
+  id: number;
+  address: string; // Or you may have more specific fields like street, city, etc.
+  created_at: string;
+  updated_at: string;
+}
+
 
 interface Enquiry {
   id: number;
   name: string;
   mobile: string;
-  address: string;
+  address: Address;
   tenure: string;
   rent: string;
   deposit: string;
@@ -16,17 +27,50 @@ interface Enquiry {
   quoted?: string;
 }
 
-const enquiries: Enquiry[] = [
-  { id: 1, name: 'Michael Scott', mobile: '1111111111', address: '123 Scranton Ave', tenure: '12 months', rent: '1200 USD', deposit: '2400 USD' },
-  { id: 2, name: 'Dwight Schrute', mobile: '2222222222', address: '456 Beet Rd', tenure: '6 months', rent: '800 USD', deposit: '1600 USD' },
-  { id: 3, name: 'Jim Halpert', mobile: '3333333333', address: '789 Pam Dr', tenure: '18 months', rent: '1400 USD', deposit: '2800 USD' }
-];
-
 const EnquiryDetailsPage = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { id } = route.params as { id: number };
-  const enquiry = enquiries.find(e => e.id === id);
+  
+  const [enquiry, setEnquiry] = useState<Enquiry | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    console.log(`Fetching details for Enquiry ID: ${id}`); // Add this line to log the ID
+    const fetchEnquiryDetails = async () => {
+      console.log('ENQUIRIES_URL:', config.ENQUIRIES_URL); // Existing debug line
+      try {
+        const response = await axiosInstance.get(`${config.ENQUIRIES_URL}/${id}`);
+        setEnquiry(response.data);
+      } catch (error) {
+        console.error('Error fetching enquiry details:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchEnquiryDetails();
+  }, [id]);
+
+  const handleConvertToCustomer = async () => {
+    try {
+      const url = `${config.ENQUIRIES_URL}/${id}/customers`;
+      console.log('Making request to:', url);
+
+      await axiosInstance.post(url);
+      navigation.navigate('CustomerListPage');
+    } catch (error) {
+      console.error('Error converting enquiry to customer:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
 
   if (!enquiry) {
     return (
@@ -46,7 +90,7 @@ const EnquiryDetailsPage = () => {
           <Paragraph style={styles.label}>Mobile No:</Paragraph>
           <Paragraph style={styles.value}>{enquiry.mobile}</Paragraph>
           <Paragraph style={styles.label}>Address:</Paragraph>
-          <Paragraph style={styles.value}>{enquiry.address}</Paragraph>
+          <Paragraph style={styles.value}>{enquiry.address.address}</Paragraph>
           <Paragraph style={styles.label}>Tenure:</Paragraph>
           <Paragraph style={styles.value}>{enquiry.tenure}</Paragraph>
           <Paragraph style={styles.label}>Rent:</Paragraph>
@@ -81,7 +125,7 @@ const EnquiryDetailsPage = () => {
         </Card.Content>
         <Button
           mode="contained"
-          onPress={() => navigation.navigate('CreateDraft', { enquiryId: enquiry.id })}
+          onPress={handleConvertToCustomer}
           style={styles.button}
           contentStyle={styles.buttonContent}
         >

@@ -10,7 +10,12 @@ const axiosInstance = axios.create({
 // Request Interceptor
 axiosInstance.interceptors.request.use(
   async (request) => {
-    // You can add headers, logs, or modify the request here
+    // Retrieve the token from AsyncStorage
+    const token = await AsyncStorage.getItem('authToken'); // Replace 'authToken' with your token's key
+    if (token) {
+      // Add the token to the Authorization header
+      request.headers.Authorization = `Bearer ${token}`;
+    }
     console.log('Request:', request);
     return request;
   },
@@ -23,7 +28,6 @@ axiosInstance.interceptors.request.use(
 // Response Interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
-    // You can log or modify the response here
     console.log('Response:', response);
     return response;
   },
