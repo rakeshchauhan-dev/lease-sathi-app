@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { TextInput, Button, Card, Title, Paragraph } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
+import config from '../../config'; // Adjust the path as necessary
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddEnquiryPage = () => {
   const navigation = useNavigation();
@@ -15,10 +18,11 @@ const AddEnquiryPage = () => {
   const [increment, setIncrement] = useState('');
   const [extraService, setExtraService] = useState('');
   const [quoted, setQuoted] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleAddEnquiry = () => {
+  const handleAddEnquiry = async () => {
+    setLoading(true);
     const newEnquiry = {
-      id: Date.now(),
       name,
       mobile,
       address,
@@ -29,9 +33,35 @@ const AddEnquiryPage = () => {
       extraService,
       quoted,
     };
-    // Add the new inquiry to your state or backend here
-    console.log(newEnquiry);
-    navigation.goBack();
+
+    try {
+      // Retrieve the token from AsyncStorage
+      const token = await AsyncStorage.getItem('authToken');
+      if (!token) {
+        Alert.alert('Error', 'Authentication token not found. Please log in again.');
+        setLoading(false);
+        return;
+      }
+
+      // Make API call to create a new enquiry, passing the token in the headers
+      const response = await axios.post(config.ENQUIRIES_URL, newEnquiry, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Pass the token as a Bearer token
+        },
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        Alert.alert('Success', 'Enquiry created successfully.');
+        navigation.navigate('EnquiryPage'); // Redirect to EnquiryPage
+      } else {
+        Alert.alert('Error', 'Failed to create enquiry. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error creating enquiry:', error);
+      Alert.alert('Error', 'An error occurred while creating the enquiry. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -118,14 +148,18 @@ const AddEnquiryPage = () => {
             keyboardType="numeric"
             placeholder="Enter quoted amount"
           />
-          <Button
-            mode="contained"
-            onPress={handleAddEnquiry}
-            style={styles.button}
-            contentStyle={styles.buttonContent}
-          >
-            Add Enquiry
-          </Button>
+          {loading ? (
+            <ActivityIndicator size="large" color="#0000ff" />
+          ) : (
+            <Button
+              mode="contained"
+              onPress={handleAddEnquiry}
+              style={styles.button}
+              contentStyle={styles.buttonContent}
+            >
+              Add Enquiry
+            </Button>
+          )}
         </Card.Content>
       </Card>
     </ScrollView>

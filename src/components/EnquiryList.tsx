@@ -1,3 +1,4 @@
+// EnquiryList.tsx
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { List, Divider, Text } from 'react-native-paper';
@@ -13,22 +14,26 @@ interface Enquiry {
 }
 
 interface EnquiryListProps {
-  type: string;
+  enquiries?: Enquiry[]; // Marking enquiries as optional
 }
 
-const enquiries: Enquiry[] = [
-  { id: 1, name: 'Alice Johnson', tenure: '12 months', rent: '2000', deposit: '5000', status: 'Pending' },
-  { id: 2, name: 'Bob Brown', tenure: '6 months', rent: '1500', deposit: '3000', status: 'Confirmed' },
-  { id: 3, name: 'Charlie Davis', tenure: '9 months', rent: '2500', deposit: '4000', status: 'Cancelled' },
-];
-
-const EnquiryList: React.FC<EnquiryListProps> = ({ type }) => {
+const EnquiryList: React.FC<EnquiryListProps> = ({ enquiries }) => {
   const navigation = useNavigation();
-  const filteredEnquiries = enquiries.filter(enquiry => enquiry.status.toLowerCase() === type);
+
+  // Debugging logs to inspect data
+  console.log('EnquiryList enquiries:', enquiries);
+
+  if (!enquiries || enquiries.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>No enquiries found.</Text>
+      </View>
+    );
+  }
 
   return (
     <View>
-      {filteredEnquiries.map(enquiry => (
+      {enquiries.map(enquiry => (
         <View key={enquiry.id}>
           <List.Item
             title={enquiry.name}
@@ -48,6 +53,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginRight: 10,
     color: 'gray',
+  },
+  emptyContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: 'gray',
+    fontSize: 16,
   },
 });
 
