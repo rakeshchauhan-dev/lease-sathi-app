@@ -41,7 +41,7 @@ const UploadRevisedDraftForm: React.FC<UploadRevisedDraftFormProps> = ({
 
     const formData = new FormData();
     formData.append('tokenID', String(tokenID)); // Use tokenID dynamically here
-    formData.append('documentType', 'Draft'); // Replace with actual document type if needed
+    formData.append('documentType', 'Revised Document'); // Replace with actual document type if needed
     formData.append('file', {
       uri: draftFile.uri,
       type: draftFile.type,
