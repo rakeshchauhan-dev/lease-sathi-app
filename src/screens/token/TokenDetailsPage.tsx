@@ -6,6 +6,7 @@ import TokenInfo from './TokenInfo';
 import AwaitingFeedbackForm from './AwaitingFeedbackForm';
 import ChallanPaymentForm from './ChallanPaymentForm';
 import UploadRevisedDraftForm from './UploadRevisedDraftForm';
+import AddAppointmentForm from './AddAppointmentForm'; // Import the new form
 
 interface Token {
   token_id: number;
@@ -22,7 +23,6 @@ const TokenDetailsPage = ({ route }: any) => {
   const { token_id } = route.params;
   const [token, setToken] = useState<Token | null>(null);
   const [currentForm, setCurrentForm] = useState<string>(''); // State to track the current form
-  const [draftFile, setDraftFile] = useState<any>(null);
 
   useEffect(() => {
     const fetchTokenDetails = async () => {
@@ -30,7 +30,6 @@ const TokenDetailsPage = ({ route }: any) => {
         const response = await axiosInstance.get(`${config.TOKENS_URL}/${token_id}`);
         setToken(response.data);
         setCurrentForm(response.data.status); // Set initial form based on token status
-        console.log('Initial form set to:', response.data.status); // Debug: Log the initial form
       } catch (error) {
         console.error('Error fetching token details:', error);
       }
@@ -39,29 +38,22 @@ const TokenDetailsPage = ({ route }: any) => {
     fetchTokenDetails();
   }, [token_id]);
 
-  const handleApprove = () => {
-    Alert.alert('Approved');
-    setCurrentForm('Challan to be Paid'); // Switch to ChallanPaymentForm after approval
-  };
-
   const renderFormByStatus = () => {
-    console.log('Rendering form:', currentForm); // Debug: Log the current form
     switch (currentForm) {
       case 'Awaiting Feedback':
         return (
           <AwaitingFeedbackForm
-            tokenID={token?.token_id || 0} // Pass tokenID
+            tokenID={token?.token_id || 0}
             setCurrentForm={setCurrentForm}
-            handleApprove={handleApprove}
           />
         );
       case 'Under Revision':
         return (
           token && (
             <UploadRevisedDraftForm
-              draftFile={draftFile}
-              setDraftFile={setDraftFile}
-              handleSubmit={() => {}} // No longer needed
+              draftFile={null}
+              setDraftFile={() => {}}
+              handleSubmit={() => {}}
               tokenID={token.token_id}
               setCurrentForm={setCurrentForm}
             />
@@ -77,6 +69,13 @@ const TokenDetailsPage = ({ route }: any) => {
             handleSubmit={() => Alert.alert('Payment submitted successfully')}
           />
         );
+      case 'Appointment':
+        return (
+          <AddAppointmentForm
+          tokenID={token?.token_id || 0}
+          setCurrentForm={setCurrentForm}
+          />
+        );
       default:
         return <Text>No specific form for this status.</Text>;
     }
@@ -88,10 +87,7 @@ const TokenDetailsPage = ({ route }: any) => {
 
   return (
     <ScrollView>
-      {/* Token Information Section */}
       <TokenInfo token={token} />
-
-      {/* Render appropriate form based on token status */}
       {renderFormByStatus()}
     </ScrollView>
   );

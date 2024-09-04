@@ -7,4 +7,5 @@ export default {
   TOKENS_URL : `${API_URL}/${PROTECTED_ROUTE}/tokens`,
   FEEDBACKS_URL : `${API_URL}/${PROTECTED_ROUTE}/feedbacks`,
   FILE_UPLOAD_URL : `${API_URL}/${PROTECTED_ROUTE}/upload-file`,
+  APPOINTMENTS_URL : `${API_URL}/${PROTECTED_ROUTE}/appointments`,
 };

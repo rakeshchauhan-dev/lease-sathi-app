@@ -7,13 +7,11 @@ import config from '../../config';
 interface AwaitingFeedbackFormProps {
   tokenID: number; // Accept tokenID as a prop
   setCurrentForm: (form: string) => void; // Add setCurrentForm prop
-  handleApprove: () => void; // Handle approve action
 }
 
 const AwaitingFeedbackForm: React.FC<AwaitingFeedbackFormProps> = ({
   tokenID,
   setCurrentForm,
-  handleApprove,
 }) => {
   const [comment, setComment] = useState<string>('');
 
@@ -36,6 +34,23 @@ const AwaitingFeedbackForm: React.FC<AwaitingFeedbackFormProps> = ({
     } catch (error) {
       console.error('Error submitting feedback:', error);
       Alert.alert('Failed to submit feedback');
+    }
+  };
+
+  const handleApprove = async () => {
+    try {
+      const response = await axiosInstance.post(`${config.TOKENS_URL}`, {
+        token_id: tokenID, // Assuming the API requires token ID
+        status: 'Appointment', // Assuming status is updated to 'Appointment'
+      });
+
+      if (response.status === 200) {
+        Alert.alert('Token status updated to Appointment');
+        setCurrentForm('Appointment'); // Switch to the Appointment form upon successful update
+      }
+    } catch (error) {
+      console.error('Error updating token status:', error);
+      Alert.alert('Failed to update token status');
     }
   };
 
