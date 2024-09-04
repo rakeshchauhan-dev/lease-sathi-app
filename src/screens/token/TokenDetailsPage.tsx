@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { ScrollView, Text, Alert } from 'react-native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
-import TokenInfo from './TokenInfo'; // Token info component
-import DocumentSubmission from './DocumentSubmission'; // Form component for document submission
-import AwaitingFeedbackForm from './AwaitingFeedbackForm'; // Form component for awaiting feedback
-import ChallanPaymentForm from './ChallanPaymentForm'; // Form component for challan payment
-import UploadRevisedDraftForm from './UploadRevisedDraftForm'; // Form component for uploading revised draft
+import TokenInfo from './TokenInfo';
+import AwaitingFeedbackForm from './AwaitingFeedbackForm';
+import ChallanPaymentForm from './ChallanPaymentForm';
+import UploadRevisedDraftForm from './UploadRevisedDraftForm';
 
 interface Token {
   token_id: number;
@@ -22,14 +21,16 @@ interface Token {
 const TokenDetailsPage = ({ route }: any) => {
   const { token_id } = route.params;
   const [token, setToken] = useState<Token | null>(null);
-  const [draftFile, setDraftFile] = useState<any>(null); // Correctly defined draftFile state
-  const [comment, setComment] = useState<string>('');
+  const [currentForm, setCurrentForm] = useState<string>(''); // State to track the current form
+  const [draftFile, setDraftFile] = useState<any>(null);
 
   useEffect(() => {
     const fetchTokenDetails = async () => {
       try {
         const response = await axiosInstance.get(`${config.TOKENS_URL}/${token_id}`);
         setToken(response.data);
+        setCurrentForm(response.data.status); // Set initial form based on token status
+        console.log('Initial form set to:', response.data.status); // Debug: Log the initial form
       } catch (error) {
         console.error('Error fetching token details:', error);
       }
@@ -38,58 +39,33 @@ const TokenDetailsPage = ({ route }: any) => {
     fetchTokenDetails();
   }, [token_id]);
 
-  const handleSubmitFeedback = async () => {
-    if (!comment.trim()) {
-      Alert.alert('Feedback comment is required');
-      return;
-    }
-
-    try {
-      await axiosInstance.post(`${config.FEEDBACKS_URL}`, {
-        token_id: token?.token_id,
-        comment: comment,
-      });
-
-      Alert.alert('Feedback submitted successfully');
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-      Alert.alert('Failed to submit feedback');
-    }
+  const handleApprove = () => {
+    Alert.alert('Approved');
+    setCurrentForm('Challan to be Paid'); // Switch to ChallanPaymentForm after approval
   };
-
-  const handleSubmitDraft = async () => {
-    // Handle submit draft logic
-    if (!draftFile) {
-      Alert.alert('No draft file selected');
-      return;
-    }
-
-    Alert.alert('Draft submitted successfully');
-  };
-
-  if (!token) {
-    return <Text>Loading...</Text>;
-  }
 
   const renderFormByStatus = () => {
-    switch (token.status) {
+    console.log('Rendering form:', currentForm); // Debug: Log the current form
+    switch (currentForm) {
       case 'Awaiting Feedback':
         return (
           <AwaitingFeedbackForm
-            comment={comment}
-            setComment={setComment}
-            handleSubmit={handleSubmitFeedback}
-            handleApprove={() => Alert.alert('Approved')}
+            tokenID={token?.token_id || 0} // Pass tokenID
+            setCurrentForm={setCurrentForm}
+            handleApprove={handleApprove}
           />
         );
       case 'Under Revision':
         return (
-          <UploadRevisedDraftForm
-            draftFile={draftFile}
-            setDraftFile={setDraftFile}
-            handleSubmit={handleSubmitDraft}
-            tokenID={token.token_id} // Pass tokenID dynamically here
-          />
+          token && (
+            <UploadRevisedDraftForm
+              draftFile={draftFile}
+              setDraftFile={setDraftFile}
+              handleSubmit={() => {}} // No longer needed
+              tokenID={token.token_id}
+              setCurrentForm={setCurrentForm}
+            />
+          )
         );
       case 'Challan to be Paid':
         return (
@@ -98,13 +74,17 @@ const TokenDetailsPage = ({ route }: any) => {
             governmentFee=""
             setAmount={() => {}}
             setGovernmentFee={() => {}}
-            handleSubmit={handleSubmitFeedback}
+            handleSubmit={() => Alert.alert('Payment submitted successfully')}
           />
         );
       default:
         return <Text>No specific form for this status.</Text>;
     }
   };
+
+  if (!token) {
+    return <Text>Loading...</Text>;
+  }
 
   return (
     <ScrollView>

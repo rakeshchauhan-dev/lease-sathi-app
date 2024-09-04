@@ -9,14 +9,16 @@ interface UploadRevisedDraftFormProps {
   draftFile: any;
   setDraftFile: (file: any) => void;
   handleSubmit: () => void;
-  tokenID: number; // Accept tokenID as a prop
+  tokenID: number;
+  setCurrentForm: (form: string) => void; // Add setCurrentForm prop
 }
 
 const UploadRevisedDraftForm: React.FC<UploadRevisedDraftFormProps> = ({
   draftFile,
   setDraftFile,
   handleSubmit,
-  tokenID, // Destructure tokenID
+  tokenID,
+  setCurrentForm, // Destructure setCurrentForm
 }) => {
   const handleDocumentPick = async () => {
     try {
@@ -40,8 +42,8 @@ const UploadRevisedDraftForm: React.FC<UploadRevisedDraftFormProps> = ({
     }
 
     const formData = new FormData();
-    formData.append('tokenID', String(tokenID)); // Use tokenID dynamically here
-    formData.append('documentType', 'Revised Document'); // Replace with actual document type if needed
+    formData.append('tokenID', String(tokenID));
+    formData.append('documentType', 'Revised Document');
     formData.append('file', {
       uri: draftFile.uri,
       type: draftFile.type,
@@ -55,8 +57,11 @@ const UploadRevisedDraftForm: React.FC<UploadRevisedDraftFormProps> = ({
         },
       });
 
-      Alert.alert('File uploaded successfully');
-      console.log('Response:', response.data);
+      if (response.status === 200) {
+        Alert.alert('File uploaded successfully');
+        setCurrentForm('Awaiting Feedback'); // Switch back to Awaiting Feedback after upload
+        console.log('Form switched to Awaiting Feedback');
+      }
     } catch (error) {
       console.error('Error uploading file:', error);
       Alert.alert('File upload failed');
