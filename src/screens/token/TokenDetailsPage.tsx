@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Text } from 'react-native';
+import { ScrollView, Text, Alert } from 'react-native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 import TokenInfo from './TokenInfo'; // Token info component
 import DocumentSubmission from './DocumentSubmission'; // Form component for document submission
 import AwaitingFeedbackForm from './AwaitingFeedbackForm'; // Form component for awaiting feedback
 import ChallanPaymentForm from './ChallanPaymentForm'; // Form component for challan payment
+import UploadRevisedDraftForm from './UploadRevisedDraftForm'; // Form component for uploading revised draft
 
 interface Token {
   token_id: number;
@@ -21,7 +22,8 @@ interface Token {
 const TokenDetailsPage = ({ route }: any) => {
   const { token_id } = route.params;
   const [token, setToken] = useState<Token | null>(null);
-  const [draftFile, setDraftFile] = useState<any>(null);
+  const [draftFile, setDraftFile] = useState<any>(null); // Correctly defined draftFile state
+  const [comment, setComment] = useState<string>('');
 
   useEffect(() => {
     const fetchTokenDetails = async () => {
@@ -36,12 +38,33 @@ const TokenDetailsPage = ({ route }: any) => {
     fetchTokenDetails();
   }, [token_id]);
 
-  const handleSubmit = () => {
-    console.log('Submitting form for token', token);
+  const handleSubmitFeedback = async () => {
+    if (!comment.trim()) {
+      Alert.alert('Feedback comment is required');
+      return;
+    }
+
+    try {
+      await axiosInstance.post(`${config.FEEDBACKS_URL}`, {
+        token_id: token?.token_id,
+        comment: comment,
+      });
+
+      Alert.alert('Feedback submitted successfully');
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      Alert.alert('Failed to submit feedback');
+    }
   };
 
-  const handleDocumentPick = async () => {
-    // Handle document picking logic
+  const handleSubmitDraft = async () => {
+    // Handle submit draft logic
+    if (!draftFile) {
+      Alert.alert('No draft file selected');
+      return;
+    }
+
+    Alert.alert('Draft submitted successfully');
   };
 
   if (!token) {
@@ -50,20 +73,22 @@ const TokenDetailsPage = ({ route }: any) => {
 
   const renderFormByStatus = () => {
     switch (token.status) {
-      case 'Doc to be submitted':
-        return (
-          <DocumentSubmission
-            draftFile={draftFile}
-            handleDocumentPick={handleDocumentPick}
-            handleSubmit={handleSubmit}
-          />
-        );
       case 'Awaiting Feedback':
         return (
           <AwaitingFeedbackForm
-            comment=""
-            setComment={() => {}}
-            handleSubmit={handleSubmit}
+            comment={comment}
+            setComment={setComment}
+            handleSubmit={handleSubmitFeedback}
+            handleApprove={() => Alert.alert('Approved')}
+          />
+        );
+      case 'Under Revision':
+        return (
+          <UploadRevisedDraftForm
+            draftFile={draftFile}
+            setDraftFile={setDraftFile}
+            handleSubmit={handleSubmitDraft}
+            tokenID={token.token_id} // Pass tokenID dynamically here
           />
         );
       case 'Challan to be Paid':
@@ -73,7 +98,7 @@ const TokenDetailsPage = ({ route }: any) => {
             governmentFee=""
             setAmount={() => {}}
             setGovernmentFee={() => {}}
-            handleSubmit={handleSubmit}
+            handleSubmit={handleSubmitFeedback}
           />
         );
       default:

@@ -6,9 +6,15 @@ interface AwaitingFeedbackFormProps {
   comment: string;
   setComment: (text: string) => void;
   handleSubmit: () => void;
+  handleApprove: () => void; // New prop for handling approve action
 }
 
-const AwaitingFeedbackForm: React.FC<AwaitingFeedbackFormProps> = ({ comment, setComment, handleSubmit }) => {
+const AwaitingFeedbackForm: React.FC<AwaitingFeedbackFormProps> = ({
+  comment,
+  setComment,
+  handleSubmit,
+  handleApprove,
+}) => {
   return (
     <Card style={styles.card}>
       <Card.Content>
@@ -21,13 +27,22 @@ const AwaitingFeedbackForm: React.FC<AwaitingFeedbackFormProps> = ({ comment, se
           multiline
           numberOfLines={4}
         />
-        <Button
-          mode="contained"
-          onPress={handleSubmit}
-          style={styles.button}
-        >
-          Submit Feedback
-        </Button>
+        <View style={styles.buttonContainer}>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            style={styles.button}
+          >
+            Submit Feedback
+          </Button>
+          <Button
+            mode="contained"
+            onPress={handleApprove}
+            style={styles.button}
+          >
+            Approve
+          </Button>
+        </View>
       </Card.Content>
     </Card>
   );
@@ -57,9 +72,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     backgroundColor: '#f9f9f9',
   },
-  button: {
+  buttonContainer: {
+    flexDirection: 'row', // Align buttons in a row
+    justifyContent: 'space-between', // Space the buttons out evenly
     marginTop: 10,
+  },
+  button: {
     borderRadius: 6,
+    flex: 1, // Ensures both buttons take equal space
+    marginHorizontal: 5, // Adds space between the buttons
   },
 });
 

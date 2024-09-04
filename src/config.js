@@ -5,4 +5,6 @@ export default {
   ENQUIRIES_URL: `${API_URL}/${PROTECTED_ROUTE}/enquiries`,
   CUSTOMERS_URL:  `${API_URL}/${PROTECTED_ROUTE}/customers`,
   TOKENS_URL : `${API_URL}/${PROTECTED_ROUTE}/tokens`,
+  FEEDBACKS_URL : `${API_URL}/${PROTECTED_ROUTE}/feedbacks`,
+  FILE_UPLOAD_URL : `${API_URL}/${PROTECTED_ROUTE}/upload-file`,
 };
