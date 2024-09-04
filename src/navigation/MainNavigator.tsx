@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Dashboard from '../screens/Dashboard';
 import NewCustomerPage from '../screens/customer/NewCustomerPage';
 import CustomerDetailsPage from '../screens/customer/CustomerDetailsPage';
+import TokenDetailsPage from '../screens/token/TokenDetailsPage';
 import RescheduleAppointment from '../screens/appointment/RescheduleAppointmentPage';
 import EnquiryDetailsPage from '../screens/enquiry/EnquiryDetailsPage';
 import EnquiryPage from '../screens/enquiry/EnquiryPage';
@@ -27,6 +28,7 @@ const DashboardStack = () => (
     <Stack.Screen name="DashboardMain" component={Dashboard} options={{ headerShown: false }} />
     <Stack.Screen name="NewCustomerPage" component={NewCustomerPage} options={{ title: 'New Customer' }} />
     <Stack.Screen name="CustomerDetailsPage" component={CustomerDetailsPage} options={{ title: 'Customer Details' }} />
+    <Stack.Screen name="TokenDetailsPage" component={TokenDetailsPage} options={{ title: 'Token Details' }} />
     <Stack.Screen name="AddAppointmentPage" component={AddAppointmentPage} options={{ title: 'Add Appointment' }} />
     <Stack.Screen name="RescheduleAppointment" component={RescheduleAppointment} options={{ title: 'Reschedule Appointment' }} />
   </Stack.Navigator>

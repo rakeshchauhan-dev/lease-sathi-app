@@ -39,7 +39,7 @@ const TokenList: React.FC<TokenListProps> = ({ searchText }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axiosInstance.get(`${config.TOKENS_URL}`, {
+      const response = await axiosInstance.get(`${config.TOKENS_URL}/list`, {
         params: { page: pageNum, limit: 10, searchText },
       });
 
@@ -91,7 +91,7 @@ const TokenList: React.FC<TokenListProps> = ({ searchText }) => {
               <List.Item
                 title={item.customer_name}
                 description={`Token No: ${item.token_no}`}
-                onPress={() => navigation.navigate('CustomerDetailsPage', { customer: item })}
+                onPress={() => navigation.navigate('TokenDetailsPage', { token_id: item.token_id })}
                 right={() => (
                   <Text style={styles.status}>
                     {item.status}
