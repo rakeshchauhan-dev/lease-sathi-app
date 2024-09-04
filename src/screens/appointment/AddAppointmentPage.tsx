@@ -8,6 +8,7 @@ const AddAppointmentPage = () => {
   const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(undefined);
   const [employeeId, setEmployeeId] = useState('');
   const [address, setAddress] = useState('');
+  const [useSameAddress, setUseSameAddress] = useState(true);
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
@@ -40,7 +41,7 @@ const AddAppointmentPage = () => {
   };
 
   const handleSubmit = () => {
-    const newAppointment = { appointmentDate, appointmentTime, employeeId, address };
+    const newAppointment = { appointmentDate, appointmentTime, employeeId, address: useSameAddress ? address : additionalAddress };
     const additionalAppointment = isAdditionalAppointmentVisible
       ? { additionalAppointmentDate, additionalAppointmentTime, additionalEmployeeId, additionalAddress, selectedRole }
       : null;
@@ -87,14 +88,22 @@ const AddAppointmentPage = () => {
             style={styles.input}
             placeholder="Enter employee ID"
           />
-          <TextInput
-            label="Address"
-            value={address}
-            onChangeText={setAddress}
-            mode="outlined"
-            style={styles.input}
-            placeholder="Enter address"
+
+          <Checkbox.Item
+            label="Use Same Address"
+            status={useSameAddress ? 'checked' : 'unchecked'}
+            onPress={() => setUseSameAddress(!useSameAddress)}
           />
+          {!useSameAddress && (
+            <TextInput
+              label="Address"
+              value={additionalAddress}
+              onChangeText={setAdditionalAddress}
+              mode="outlined"
+              style={styles.input}
+              placeholder="Enter address"
+            />
+          )}
 
           <Checkbox.Item
             label="Add Additional Appointment"

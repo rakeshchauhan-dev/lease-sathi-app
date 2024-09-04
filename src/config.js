@@ -4,4 +4,5 @@ export default {
   LOGIN_URL: `${API_URL}/login`,
   ENQUIRIES_URL: `${API_URL}/${PROTECTED_ROUTE}/enquiries`,
   CUSTOMERS_URL:  `${API_URL}/${PROTECTED_ROUTE}/customers`,
+  TOKENS_URL : `${API_URL}/${PROTECTED_ROUTE}/tokens`,
 };

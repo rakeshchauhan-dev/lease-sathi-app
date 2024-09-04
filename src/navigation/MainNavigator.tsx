@@ -11,6 +11,7 @@ import CustomerDetailsPage from '../screens/customer/CustomerDetailsPage';
 import RescheduleAppointment from '../screens/appointment/RescheduleAppointmentPage';
 import EnquiryDetailsPage from '../screens/enquiry/EnquiryDetailsPage';
 import EnquiryPage from '../screens/enquiry/EnquiryPage';
+import CustomerPage from '../screens/customer/CustomerPage';
 import AddAppointmentPage from '../screens/appointment/AddAppointmentPage';
 import CreateDraft from '../screens/CreateDraft';
 import AddEnquiryPage from '../screens/enquiry/AddEnquiryPage';
@@ -40,6 +41,12 @@ const EnquiryStack = () => (
   </Stack.Navigator>
 );
 
+const CustomerStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="CustomerPage" component={CustomerPage} options={{ headerShown: false }} />
+  </Stack.Navigator>
+);
+
 const MainTabNavigator = () => (
   <Tab.Navigator
     initialRouteName="Dashboard"
@@ -63,7 +70,7 @@ const MainTabNavigator = () => (
   >
     <Tab.Screen name="Dashboard" component={DashboardStack} />
     <Tab.Screen name="Enquiry" component={EnquiryStack} />
-    <Tab.Screen name="Customer" component={EnquiryStack} />
+    <Tab.Screen name="Customer" component={CustomerStack} />
   </Tab.Navigator>
 );
 
