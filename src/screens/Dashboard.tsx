@@ -17,10 +17,6 @@ const Dashboard = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Title style={styles.title}>Dashboard</Title>
-      </View>
-      <Divider />
       <TextInput
         style={styles.searchBar}
         placeholder="Search Customers..."
