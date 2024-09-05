@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Card, TextInput, Button, Title, Paragraph, Checkbox, RadioButton } from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import axiosInstance from '../../axiosInstance';
@@ -16,6 +17,7 @@ interface AddAppointmentFormProps {
 }
 
 const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCurrentForm }) => {
+  const navigation = useNavigation();
   const [appointmentDate, setAppointmentDate] = useState<Date | undefined>(undefined);
   const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(undefined);
   const [employeeId, setEmployeeId] = useState('');
@@ -123,19 +125,19 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
   const handleSubmit = async () => {
     const newAppointment = {
       token_id: tokenID, // Use the passed tokenID
-      appointment_date: appointmentDate ? appointmentDate.toISOString().split('T')[0] : undefined,
-      appointment_time: appointmentTime ? appointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : undefined,
+      appointment_date: appointmentDate ? appointmentDate.toISOString() : undefined, // ISO string with time
+      appointment_time: appointmentTime ? appointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : undefined, // 24-hour time format
       employee_id: employeeId,
       use_same_address: useSameAddress,
       address: useSameAddress ? address : additionalAddress,
       role: selectedRole,
       is_additional_appointment_visible: isAdditionalAppointmentVisible,
       additional_appointment_date: isAdditionalAppointmentVisible && additionalAppointmentDate
-        ? additionalAppointmentDate.toISOString().split('T')[0]
-        : undefined,
+      ? additionalAppointmentDate.toISOString() // ISO string for additional appointment date
+      : undefined,
       additional_appointment_time: isAdditionalAppointmentVisible && additionalAppointmentTime
-        ? additionalAppointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        : undefined,
+      ? additionalAppointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) // 24-hour time format for additional appointment
+      : undefined,
       additional_employee_id: isAdditionalAppointmentVisible ? additionalEmployeeId : undefined,
       additional_address: isAdditionalAppointmentVisible ? additionalAddress : undefined,
     };
@@ -147,6 +149,7 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
       // Assuming success if status is 200
       if (response.status === 200) {
         Alert.alert('Success', 'Appointment saved successfully!');
+        navigation.navigate('DashboardMain'); // Navigate to DashboardMain after saving
       } else {
         throw new Error('Failed to save appointment');
       }
