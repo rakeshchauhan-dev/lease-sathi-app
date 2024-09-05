@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { Card, TextInput, Button, Title, Paragraph, Checkbox, RadioButton } from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import axiosInstance from '../../axiosInstance';
@@ -26,16 +26,19 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
   const [address, setAddress] = useState('');
   const [useSameAddress, setUseSameAddress] = useState(true);
 
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
   const [isAdditionalAppointmentVisible, setAdditionalAppointmentVisibility] = useState(false);
   const [additionalAppointmentDate, setAdditionalAppointmentDate] = useState<Date | undefined>(undefined);
   const [additionalAppointmentTime, setAdditionalAppointmentTime] = useState<Date | undefined>(undefined);
   const [additionalEmployeeId, setAdditionalEmployeeId] = useState('');
+  const [additionalEmployeeName, setAdditionalEmployeeName] = useState(''); // Additional employee name state
+  const [filteredAdditionalEmployees, setFilteredAdditionalEmployees] = useState<Employee[]>([]); // Filtered list for additional employees
+  const [isAdditionalEmployeeListVisible, setAdditionalEmployeeListVisible] = useState(false);
   const [additionalAddress, setAdditionalAddress] = useState('');
   const [selectedRole, setSelectedRole] = useState('Tenant');
 
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
   const [isAdditionalDatePickerVisible, setAdditionalDatePickerVisibility] = useState(false);
   const [isAdditionalTimePickerVisible, setAdditionalTimePickerVisibility] = useState(false);
 
@@ -52,7 +55,7 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
     fetchEmployees();
   }, []);
 
-  // Filter employee list based on the input
+  // Filter employee list based on the input for the main employee search
   const handleEmployeeSearch = (name: string) => {
     setEmployeeName(name);
     if (name.length >= 2) {
@@ -66,9 +69,32 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
     }
   };
 
+    // Filter employee list based on the input for additional employee search
+    const handleAdditionalEmployeeSearch = (name: string) => {
+      setAdditionalEmployeeName(name);
+      if (name.length >= 2) {
+        const filtered = employees.filter((employee) =>
+          employee.name.toLowerCase().includes(name.toLowerCase())
+        );
+        setFilteredAdditionalEmployees(filtered);
+        setAdditionalEmployeeListVisible(true);
+      } else {
+        setAdditionalEmployeeListVisible(false);
+      }
+    };
+  
+    // Select additional employee
+    const handleSelectAdditionalEmployee = (employee: Employee) => {
+      setAdditionalEmployeeName(employee.name);
+      setAdditionalEmployeeId(employee.id);
+      setAdditionalEmployeeListVisible(false); // Hide the suggestions
+    };
+  
+
+  // Select main employee
   const handleSelectEmployee = (employee: Employee) => {
     setEmployeeName(employee.name);
-    setEmployeeId(employee.id); // Store the employee ID
+    setEmployeeId(employee.id);
     setEmployeeListVisible(false); // Hide the suggestions
   };
 
@@ -94,7 +120,7 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
     setAdditionalTimePickerVisibility(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newAppointment = {
       token_id: tokenID, // Use the passed tokenID
       appointment_date: appointmentDate ? appointmentDate.toISOString().split('T')[0] : undefined,
@@ -116,6 +142,18 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
   
     console.log('Appointment Request Body:', newAppointment);
     // Add your submit logic here, e.g., sending data to a backend or updating state
+    try {
+      const response = await axiosInstance.post(`${config.APPOINTMENTS_URL}`, newAppointment);
+      // Assuming success if status is 200
+      if (response.status === 200) {
+        Alert.alert('Success', 'Appointment saved successfully!');
+      } else {
+        throw new Error('Failed to save appointment');
+      }
+    } catch (error) {
+      console.error('Error saving appointment:', error);
+      Alert.alert('Error', 'Failed to save appointment. Please try again.');
+    }
   };
 
   return (
@@ -147,8 +185,8 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
             style={styles.inputCompact}
           />
 
-                 {/* Employee search input */}
-                 <TextInput
+          {/* Employee search input */}
+          <TextInput
             label="Employee Name"
             value={employeeName}
             onChangeText={handleEmployeeSearch}
@@ -237,14 +275,29 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
                 mode="outlined"
                 style={styles.inputCompact}
               />
+
+              {/* Additional employee search input */}
               <TextInput
-                label="Additional Employee ID"
-                value={additionalEmployeeId}
-                onChangeText={setAdditionalEmployeeId}
+                label="Additional Employee Name"
+                value={additionalEmployeeName}
+                onChangeText={handleAdditionalEmployeeSearch}
                 mode="outlined"
                 style={styles.inputCompact}
-                placeholder="Enter additional employee ID"
+                placeholder="Enter additional employee name"
               />
+              {isAdditionalEmployeeListVisible && (
+                <FlatList
+                  data={filteredAdditionalEmployees}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity onPress={() => handleSelectAdditionalEmployee(item)}>
+                      <Text style={styles.suggestionItem}>{item.name}</Text>
+                    </TouchableOpacity>
+                  )}
+                  style={styles.suggestionList}
+                />
+              )}
+
               <TextInput
                 label="Additional Address"
                 value={additionalAddress}
