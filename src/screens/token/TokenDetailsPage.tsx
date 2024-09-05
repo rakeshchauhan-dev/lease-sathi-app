@@ -19,7 +19,15 @@ interface Token {
   customer_mobile: string;
 }
 
-const TokenDetailsPage = ({ route }: any) => {
+interface TokenDetailsPageProps {
+  route: {
+    params: {
+      token_id: number;
+    };
+  };
+}
+
+const TokenDetailsPage: React.FC<TokenDetailsPageProps> = ({ route }) => {
   const { token_id } = route.params;
   const [token, setToken] = useState<Token | null>(null);
   const [currentForm, setCurrentForm] = useState<string>(''); // State to track the current form
@@ -39,25 +47,32 @@ const TokenDetailsPage = ({ route }: any) => {
   }, [token_id]);
 
   const renderFormByStatus = () => {
+    if (!token) return null;
+
     switch (currentForm) {
       case 'Awaiting Feedback':
         return (
           <AwaitingFeedbackForm
-            tokenID={token?.token_id || 0}
+            tokenID={token.token_id}
             setCurrentForm={setCurrentForm}
           />
         );
       case 'Under Revision':
         return (
-          token && (
-            <UploadRevisedDraftForm
-              draftFile={null}
-              setDraftFile={() => {}}
-              handleSubmit={() => {}}
-              tokenID={token.token_id}
-              setCurrentForm={setCurrentForm}
-            />
-          )
+          <UploadRevisedDraftForm
+            draftFile={null}
+            setDraftFile={() => {}}
+            handleSubmit={() => {}}
+            tokenID={token.token_id}
+            setCurrentForm={setCurrentForm}
+          />
+        );
+      case 'Schedule Appointment':
+        return (
+          <AddAppointmentForm
+            tokenID={token.token_id}
+            setCurrentForm={setCurrentForm}
+          />
         );
       case 'Challan to be Paid':
         return (
@@ -67,13 +82,6 @@ const TokenDetailsPage = ({ route }: any) => {
             setAmount={() => {}}
             setGovernmentFee={() => {}}
             handleSubmit={() => Alert.alert('Payment submitted successfully')}
-          />
-        );
-      case 'Appointment':
-        return (
-          <AddAppointmentForm
-          tokenID={token?.token_id || 0}
-          setCurrentForm={setCurrentForm}
           />
         );
       default:

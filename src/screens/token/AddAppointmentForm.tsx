@@ -1,20 +1,28 @@
-import React, { useState } from 'react';
-import { ScrollView, StyleSheet, View, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { Card, TextInput, Button, Title, Paragraph, Checkbox, RadioButton } from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import axiosInstance from '../../axiosInstance';
+import config from '../../config';
+
+interface Employee {
+  id: string;
+  name: string;
+}
 
 interface AddAppointmentFormProps {
-    tokenID: number;
-    setCurrentForm: (form: string) => void;
-  }
+  tokenID: number;
+  setCurrentForm: (form: string) => void;
+}
 
-  const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ 
-    tokenID, 
-    setCurrentForm,
- }) => {    
+const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCurrentForm }) => {
   const [appointmentDate, setAppointmentDate] = useState<Date | undefined>(undefined);
   const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(undefined);
   const [employeeId, setEmployeeId] = useState('');
+  const [employeeName, setEmployeeName] = useState('');
+  const [employees, setEmployees] = useState<Employee[]>([]);
+  const [filteredEmployees, setFilteredEmployees] = useState<Employee[]>([]);
+  const [isEmployeeListVisible, setEmployeeListVisible] = useState(false);
   const [address, setAddress] = useState('');
   const [useSameAddress, setUseSameAddress] = useState(true);
 
@@ -28,11 +36,43 @@ interface AddAppointmentFormProps {
   const [additionalAddress, setAdditionalAddress] = useState('');
   const [selectedRole, setSelectedRole] = useState('Tenant');
 
-  // Separate date and time pickers for normal and additional appointments
   const [isAdditionalDatePickerVisible, setAdditionalDatePickerVisibility] = useState(false);
   const [isAdditionalTimePickerVisible, setAdditionalTimePickerVisibility] = useState(false);
 
-  // Handlers for normal appointment date/time
+  // Fetch employee data from the API
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      try {
+        const response = await axiosInstance.get(`${config.EMPLOYEES_URL}`);
+        setEmployees(response.data);
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+      }
+    };
+    fetchEmployees();
+  }, []);
+
+  // Filter employee list based on the input
+  const handleEmployeeSearch = (name: string) => {
+    setEmployeeName(name);
+    if (name.length >= 2) {
+      const filtered = employees.filter((employee) =>
+        employee.name.toLowerCase().includes(name.toLowerCase())
+      );
+      setFilteredEmployees(filtered);
+      setEmployeeListVisible(true);
+    } else {
+      setEmployeeListVisible(false);
+    }
+  };
+
+  const handleSelectEmployee = (employee: Employee) => {
+    setEmployeeName(employee.name);
+    setEmployeeId(employee.id); // Store the employee ID
+    setEmployeeListVisible(false); // Hide the suggestions
+  };
+
+  // Handlers for appointment date/time
   const handleConfirmDate = (date: Date) => {
     setAppointmentDate(date);
     setDatePickerVisibility(false);
@@ -53,9 +93,6 @@ interface AddAppointmentFormProps {
     setAdditionalAppointmentTime(time);
     setAdditionalTimePickerVisibility(false);
   };
-
-
-  
 
   const handleSubmit = () => {
     const newAppointment = {
@@ -109,14 +146,28 @@ interface AddAppointmentFormProps {
             mode="outlined"
             style={styles.inputCompact}
           />
-          <TextInput
-            label="Employee ID"
-            value={employeeId}
-            onChangeText={setEmployeeId}
+
+                 {/* Employee search input */}
+                 <TextInput
+            label="Employee Name"
+            value={employeeName}
+            onChangeText={handleEmployeeSearch}
             mode="outlined"
             style={styles.inputCompact}
-            placeholder="Enter employee ID"
+            placeholder="Enter employee name"
           />
+          {isEmployeeListVisible && (
+            <FlatList
+              data={filteredEmployees}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => handleSelectEmployee(item)}>
+                  <Text style={styles.suggestionItem}>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+              style={styles.suggestionList}
+            />
+          )}
 
           <Checkbox.Item
             label="Use Same Address"
@@ -301,6 +352,19 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#ddd',
     marginVertical: 12,
+  },
+  suggestionItem: {
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  suggestionList: {
+    maxHeight: 150, // Limit height so it doesn't expand too much
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 4,
   },
 });
 

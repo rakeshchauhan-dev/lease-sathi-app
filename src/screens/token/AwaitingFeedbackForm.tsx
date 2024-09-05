@@ -39,14 +39,13 @@ const AwaitingFeedbackForm: React.FC<AwaitingFeedbackFormProps> = ({
 
   const handleApprove = async () => {
     try {
-      const response = await axiosInstance.post(`${config.TOKENS_URL}`, {
-        token_id: tokenID, // Assuming the API requires token ID
-        status: 'Appointment', // Assuming status is updated to 'Appointment'
+      const response = await axiosInstance.put(`${config.TOKENS_URL}/${tokenID}`, {
+        status: 'Schedule Appointment', // Assuming status is updated to 'Appointment'
       });
 
       if (response.status === 200) {
         Alert.alert('Token status updated to Appointment');
-        setCurrentForm('Appointment'); // Switch to the Appointment form upon successful update
+        setCurrentForm('Schedule Appointment'); // Switch to the Appointment form upon successful update
       }
     } catch (error) {
       console.error('Error updating token status:', error);
