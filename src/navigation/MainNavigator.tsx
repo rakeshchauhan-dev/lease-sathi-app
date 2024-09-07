@@ -4,21 +4,20 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, ActivityIndicator, Text } from 'react-native';
 
 import Dashboard from '../screens/Dashboard';
+import AppointmentDashboard from '../screens/AppointmentDashboard';
 import NewCustomerPage from '../screens/customer/NewCustomerPage';
 import CustomerDetailsPage from '../screens/customer/CustomerDetailsPage';
 import TokenDetailsPage from '../screens/token/TokenDetailsPage';
-import RescheduleAppointment from '../screens/appointment/RescheduleAppointmentPage';
 import EnquiryDetailsPage from '../screens/enquiry/EnquiryDetailsPage';
+import AppointmentDetailsPage from '../screens/appointment/AppointmentDetailsPage';
 import EnquiryPage from '../screens/enquiry/EnquiryPage';
 import CustomerPage from '../screens/customer/CustomerPage';
-import AddAppointmentPage from '../screens/appointment/AddAppointmentPage';
 import CreateDraft from '../screens/CreateDraft';
 import AddEnquiryPage from '../screens/enquiry/AddEnquiryPage';
 import LoginScreen from '../screens/LoginScreen';
-import { View, ActivityIndicator, Text } from 'react-native';
-
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -29,8 +28,6 @@ const DashboardStack = () => (
     <Stack.Screen name="NewCustomerPage" component={NewCustomerPage} options={{ title: 'New Customer' }} />
     <Stack.Screen name="CustomerDetailsPage" component={CustomerDetailsPage} options={{ title: 'Customer Details' }} />
     <Stack.Screen name="TokenDetailsPage" component={TokenDetailsPage} options={{ title: 'Token Details' }} />
-    <Stack.Screen name="AddAppointmentPage" component={AddAppointmentPage} options={{ title: 'Add Appointment' }} />
-    <Stack.Screen name="RescheduleAppointment" component={RescheduleAppointment} options={{ title: 'Reschedule Appointment' }} />
   </Stack.Navigator>
 );
 
@@ -49,20 +46,35 @@ const CustomerStack = () => (
   </Stack.Navigator>
 );
 
+const AppointmentStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="AppointmentDashboard" component={AppointmentDashboard} options={{ headerShown: false }} />
+    <Stack.Screen name="AppointmentDetailsPage" component={AppointmentDetailsPage} options={{ title: 'Appointment Details' }} />
+  </Stack.Navigator>
+);
+
 const MainTabNavigator = () => (
   <Tab.Navigator
     initialRouteName="Dashboard"
     screenOptions={({ route }) => ({
       tabBarIcon: ({ color, size }) => {
         let iconName;
-        if (route.name === 'Dashboard') {
-          iconName = 'home';
-        } else if (route.name === 'Enquiry') {
-          iconName = 'search';
-        } else if (route.name === 'Customer') {
-          iconName = 'person';
+        switch (route.name) {
+          case 'Dashboard':
+            iconName = 'home';
+            break;
+          case 'Enquiry':
+            iconName = 'search';
+            break;
+          case 'Customer':
+            iconName = 'person';
+            break;
+          case 'Appointments':
+            iconName = 'calendar';
+            break;
+          default:
+            iconName = 'home';
         }
-        
         return <Ionicons name={iconName} size={size} color={color} />;
       },
       tabBarActiveTintColor: 'tomato',
@@ -73,6 +85,7 @@ const MainTabNavigator = () => (
     <Tab.Screen name="Dashboard" component={DashboardStack} />
     <Tab.Screen name="Enquiry" component={EnquiryStack} />
     <Tab.Screen name="Customer" component={CustomerStack} />
+    <Tab.Screen name="Appointments" component={AppointmentStack} />
   </Tab.Navigator>
 );
 
@@ -88,7 +101,7 @@ const MainNavigator = () => {
       } catch (error) {
         console.error('Failed to check authentication status:', error);
       } finally {
-        setLoading(false); // Ensure loading is set to false
+        setLoading(false);
       }
     };
     checkAuthStatus();
@@ -104,13 +117,12 @@ const MainNavigator = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName={isAuthenticated ? "DashboardMain" : "Login"} screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName={isAuthenticated ? "Dashboard" : "Login"} screenOptions={{ headerShown: false }}>
         <Stack.Screen name="DashboardMain" component={MainTabNavigator} />
         <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
-
 
 export default MainNavigator;
