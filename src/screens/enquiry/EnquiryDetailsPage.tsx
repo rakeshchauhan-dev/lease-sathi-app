@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { Card, Title, Paragraph, Button } from 'react-native-paper';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import config from '../../config';
+import { ScrollView, Text, Alert, View, ActivityIndicator, StyleSheet } from 'react-native';
+import { Button, Card, Paragraph, Title } from 'react-native-paper';
+import { useRoute, useNavigation } from '@react-navigation/native'; // Import useRoute
 import axiosInstance from '../../axiosInstance';
+import config from '../../config';
 
 interface Address {
   id: number;
@@ -27,16 +27,14 @@ interface Enquiry {
 
 const EnquiryDetailsPage = () => {
   const route = useRoute();
-  const navigation = useNavigation<any>(); // Typed useNavigation
-  const { id } = route.params as { id: number };
-  
+  const { id } = route.params as { id: number }; // Extract enquiry id from route params
+  const navigation = useNavigation<any>();
+
   const [enquiry, setEnquiry] = useState<Enquiry | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    console.log(`Fetching details for Enquiry ID: ${id}`);
     const fetchEnquiryDetails = async () => {
-      console.log('ENQUIRIES_URL:', config.ENQUIRIES_URL);
       try {
         const response = await axiosInstance.get(`${config.ENQUIRIES_URL}/${id}`);
         setEnquiry(response.data);
@@ -52,19 +50,18 @@ const EnquiryDetailsPage = () => {
 
   const handleConvertToCustomer = async () => {
     try {
-      const url = `${config.ENQUIRIES_URL}/${id}/customers`;
-      console.log('Making request to:', url);
-
-      await axiosInstance.post(url);
-      navigation.navigate('CustomerPage');
+      await axiosInstance.post(`${config.ENQUIRIES_URL}/${id}/customers`);
+      Alert.alert('Success', 'Enquiry converted to customer successfully!');
+      navigation.navigate('EnquiryDashboard');
     } catch (error) {
       console.error('Error converting enquiry to customer:', error);
+      Alert.alert('Error', 'Failed to convert enquiry to customer. Please try again.');
     }
   };
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
@@ -73,7 +70,7 @@ const EnquiryDetailsPage = () => {
   if (!enquiry) {
     return (
       <View style={styles.container}>
-        <Title style={styles.title}>Enquiry not found</Title>
+        <Text>Enquiry not found</Text>
       </View>
     );
   }
@@ -82,50 +79,30 @@ const EnquiryDetailsPage = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <Card style={styles.card}>
         <Card.Content>
-          <Title style={styles.title}>Enquiry Details</Title>
-          <Paragraph style={styles.label}>Name:</Paragraph>
-          <Paragraph style={styles.value}>{enquiry.name}</Paragraph>
-          <Paragraph style={styles.label}>Mobile No:</Paragraph>
-          <Paragraph style={styles.value}>{enquiry.mobile}</Paragraph>
-          <Paragraph style={styles.label}>Address:</Paragraph>
-          <Paragraph style={styles.value}>{enquiry.address.address}</Paragraph>
-          <Paragraph style={styles.label}>Tenure:</Paragraph>
-          <Paragraph style={styles.value}>{enquiry.tenure}</Paragraph>
-          <Paragraph style={styles.label}>Rent:</Paragraph>
-          <Paragraph style={styles.value}>{enquiry.rent}</Paragraph>
-          <Paragraph style={styles.label}>Deposit:</Paragraph>
-          <Paragraph style={styles.value}>{enquiry.deposit}</Paragraph>
-          {enquiry.increment && (
-            <>
-              <Paragraph style={styles.label}>Increment:</Paragraph>
-              <Paragraph style={styles.value}>{enquiry.increment}</Paragraph>
-            </>
-          )}
-          {enquiry.extraService && (
-            <>
-              <Paragraph style={styles.label}>Extra Service:</Paragraph>
-              <Paragraph style={styles.value}>{enquiry.extraService}</Paragraph>
-            </>
-          )}
-          {enquiry.quoted && (
-            <>
-              <Paragraph style={styles.label}>Quoted:</Paragraph>
-              <Paragraph style={styles.value}>{enquiry.quoted}</Paragraph>
-            </>
-          )}
+          <Title>Enquiry Details</Title>
+          <Paragraph>Name: {enquiry.name}</Paragraph>
+          <Paragraph>Mobile No: {enquiry.mobile}</Paragraph>
+          <Paragraph>Address: {enquiry.address.address}</Paragraph>
+          <Paragraph>Tenure: {enquiry.tenure}</Paragraph>
+          <Paragraph>Rent: {enquiry.rent}</Paragraph>
+          <Paragraph>Deposit: {enquiry.deposit}</Paragraph>
+          {enquiry.increment && <Paragraph>Increment: {enquiry.increment}</Paragraph>}
+          {enquiry.extraService && <Paragraph>Extra Service: {enquiry.extraService}</Paragraph>}
+          {enquiry.quoted && <Paragraph>Quoted: {enquiry.quoted}</Paragraph>}
         </Card.Content>
       </Card>
 
       <Card style={styles.card}>
         <Card.Content>
-          <Title style={styles.title}>Convert Enquiry to Customer</Title>
-          <Paragraph style={styles.description}>Would you like to convert this enquiry into a customer by scheduling an appointment?</Paragraph>
+          <Title>Convert Enquiry to Customer</Title>
+          <Paragraph>
+            Would you like to convert this enquiry into a customer by scheduling an appointment?
+          </Paragraph>
         </Card.Content>
         <Button
           mode="contained"
           onPress={handleConvertToCustomer}
           style={styles.button}
-          contentStyle={styles.buttonContent}
         >
           Convert to Customer
         </Button>
@@ -136,46 +113,24 @@ const EnquiryDetailsPage = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
     padding: 16,
     backgroundColor: '#f5f5f5',
   },
   card: {
-    marginVertical: 20,
-    padding: 16,
-    backgroundColor: '#ffffff',
+    marginVertical: 10,
+    backgroundColor: '#fff',
     borderRadius: 8,
     elevation: 3,
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 8,
-    color: '#333',
-    textAlign: 'center',
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#555',
-    marginTop: 8,
-  },
-  value: {
-    fontSize: 16,
-    color: '#777',
-    marginBottom: 8,
-  },
-  description: {
-    fontSize: 16,
-    color: '#777',
-    marginBottom: 20,
-    textAlign: 'center',
+    padding: 16,
   },
   button: {
-    margin: 16,
+    marginTop: 16,
     borderRadius: 8,
   },
-  buttonContent: {
-    paddingVertical: 10,
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

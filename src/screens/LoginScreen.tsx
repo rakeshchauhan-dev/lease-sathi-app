@@ -3,12 +3,14 @@ import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator, To
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from '../config'; // Adjust the path as necessary
+import { useNavigation } from '@react-navigation/native';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({  }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const navigation = useNavigation<any>();
 
   const handleLogin = async () => {
     if (!email || !password) {

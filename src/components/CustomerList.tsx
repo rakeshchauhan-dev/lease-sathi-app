@@ -32,7 +32,7 @@ const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
   const [loading, setLoading] = useState(false);
   const [noData, setNoData] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const fetchCustomers = async (pageNum: number) => {
     setLoading(true);
@@ -96,7 +96,7 @@ const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
               <List.Item
                 title={item.name}
                 description={`Mobile: ${item.mobile}`}
-                // onPress={() => navigation.navigate('CustomerDetailsPage', { customer_id: item.id })}
+                onPress={() => navigation.navigate('CustomerDetailsPage', { customer_id: item.id })}
                 right={() => (
                   <Text style={styles.enquiryId}>
                     {item.enquiry_id ? `Enquiry ID: ${item.enquiry_id}` : 'No Enquiry'}

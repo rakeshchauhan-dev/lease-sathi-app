@@ -12,11 +12,11 @@ import NewCustomerPage from '../screens/customer/NewCustomerPage';
 import TokenDetailsPage from '../screens/token/TokenDetailsPage';
 import EnquiryDetailsPage from '../screens/enquiry/EnquiryDetailsPage';
 import AppointmentDetailsPage from '../screens/appointment/AppointmentDetailsPage';
-import CreateDraft from '../screens/CreateDraft';
 import AddEnquiryPage from '../screens/enquiry/AddEnquiryPage';
 import LoginScreen from '../screens/LoginScreen';
 import CustomerDashboard from '../screens/CustomerDashboard';
 import EnquiryDashboard from '../screens/EnquiryDashboard';
+import CustomerDetailsPage from '../screens/customer/CustomerDetailsPage';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -34,13 +34,14 @@ const EnquiryStack = () => (
     <Stack.Screen name="EnquiryDashboard" component={EnquiryDashboard} options={{ headerShown: false }} />
     <Stack.Screen name="AddEnquiryPage" component={AddEnquiryPage} options={{ title: 'Add Enquiry' }} />
     <Stack.Screen name="EnquiryDetailsPage" component={EnquiryDetailsPage} options={{ title: 'Enquiry Details' }} />
-    <Stack.Screen name="CreateDraft" component={CreateDraft} options={{ title: 'Create Draft' }} />
   </Stack.Navigator>
 );
 
 const CustomerStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="CustomerDashboard" component={CustomerDashboard} options={{ headerShown: false }} />
+    <Stack.Screen name="CustomerDetailsPage" component={CustomerDetailsPage} options={{ title: 'Appointment Details' }} />
+
   </Stack.Navigator>
 );
 

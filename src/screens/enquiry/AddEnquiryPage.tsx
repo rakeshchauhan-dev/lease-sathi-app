@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import config from '../../config'; // Adjust the path as necessary
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axiosInstance from '../../axiosInstance';
 
 const AddEnquiryPage = () => {
   const navigation = useNavigation<any>();
@@ -44,15 +45,11 @@ const AddEnquiryPage = () => {
       }
 
       // Make API call to create a new enquiry, passing the token in the headers
-      const response = await axios.post(config.ENQUIRIES_URL, newEnquiry, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Pass the token as a Bearer token
-        },
-      });
+      const response = await axiosInstance.post(config.ENQUIRIES_URL, newEnquiry);
 
       if (response.status === 201 || response.status === 200) {
         Alert.alert('Success', 'Enquiry created successfully.');
-        navigation.navigate('EnquiryPage'); // Redirect to EnquiryPage
+        navigation.navigate('EnquiryDashboard'); // Redirect to EnquiryPage
       } else {
         Alert.alert('Error', 'Failed to create enquiry. Please try again.');
       }
