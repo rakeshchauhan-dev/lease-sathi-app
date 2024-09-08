@@ -9,4 +9,5 @@ export default {
   FILE_UPLOAD_URL : `${API_URL}/${PROTECTED_ROUTE}/upload-file`,
   APPOINTMENTS_URL : `${API_URL}/${PROTECTED_ROUTE}/appointments`,
   EMPLOYEES_URL : `${API_URL}/${PROTECTED_ROUTE}/users`,
+  PAYMENTS_URL : `${API_URL}/${PROTECTED_ROUTE}/payments`,
 };
