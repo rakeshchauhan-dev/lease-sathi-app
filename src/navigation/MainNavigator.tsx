@@ -14,10 +14,10 @@ import TokenDetailsPage from '../screens/token/TokenDetailsPage';
 import EnquiryDetailsPage from '../screens/enquiry/EnquiryDetailsPage';
 import AppointmentDetailsPage from '../screens/appointment/AppointmentDetailsPage';
 import EnquiryPage from '../screens/enquiry/EnquiryPage';
-import CustomerPage from '../screens/customer/CustomerPage';
 import CreateDraft from '../screens/CreateDraft';
 import AddEnquiryPage from '../screens/enquiry/AddEnquiryPage';
 import LoginScreen from '../screens/LoginScreen';
+import CustomerDashboard from '../screens/CustomerDashboard';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -42,7 +42,7 @@ const EnquiryStack = () => (
 
 const CustomerStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="CustomerPage" component={CustomerPage} options={{ headerShown: false }} />
+    <Stack.Screen name="CustomerDashboard" component={CustomerDashboard} options={{ headerShown: false }} />
   </Stack.Navigator>
 );
 

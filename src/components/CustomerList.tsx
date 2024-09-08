@@ -1,158 +1,133 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { List, Divider, Text } from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, FlatList, Text, ActivityIndicator } from 'react-native';
+import { List, Divider } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import axiosInstance from '../axiosInstance';
+import config from '../config';
 
 interface Customer {
   id: number;
+  enquiry_id: number | null;
   name: string;
-  type: string; // "new" or "upcoming"
-  status: 'Awaiting Feedback' | 'Under Revision' | 'Approved' | 'Appointment' | 'Challan to be Paid' | 'Doc to be submitted' |'Doc to be checked';
-  appointmentDate: string;
-  reason: string;
   mobile: string;
-  address: string;
-  email: string;
-  appointmentTime?: string;
-  employeeId?: string;
+  address_id: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Meta {
+  limit: number;
+  page: number;
+  total: number;
 }
 
 interface CustomerListProps {
-  type: string;
+  searchText: string;  // Prop from parent component
 }
 
-const customers: Customer[] = [
-  { 
-    id: 1, 
-    name: 'John Doe', 
-    type: 'new', 
-    status: 'Awaiting Feedback', 
-    appointmentDate: '2024-08-10', 
-    reason: 'Rent dates are not proper',
-    mobile: '1234567890',
-    address: '123 Main St',
-    email: 'john.doe@example.com',
-    appointmentTime: '10:00 AM',
-    employeeId: 'E123',
-  },
-  { 
-    id: 2, 
-    name: 'Jane Smith', 
-    type: 'upcoming', 
-    status: 'Approved', 
-    appointmentDate: '2024-08-12', 
-    reason: 'Follow-up',
-    mobile: '0987654321',
-    address: '456 Elm St',
-    email: 'jane.smith@example.com',
-    appointmentTime: '02:00 PM',
-    employeeId: 'E124',
-  },
-  { 
-    id: 3, 
-    name: 'Sam Johnson', 
-    type: 'new', 
-    status: 'Under Revision', 
-    appointmentDate: '2024-08-15', 
-    reason: 'Naming issue',
-    mobile: '5555555555',
-    address: '789 Oak St',
-    email: 'sam.johnson@example.com',
-  },
-  {
-    id: 4,
-    name: 'Alice Brown',
-    type: 'upcoming',
-    status: 'Approved',
-    appointmentDate: '2024-08-18',
-    reason: 'Consultation',
-    mobile: '7777777777',
-    address: '101 Pine St',
-    email: 'alice.brown@example.com',
-  },
-  {
-    id: 5,
-    name: 'Mark Taylor',
-    type: 'new',
-    status: 'Appointment',
-    appointmentDate: '2024-08-20',
-    reason: 'Identity verification',
-    mobile: '6666666666',
-    address: '202 Cedar St',
-    email: 'mark.taylor@example.com',
-    appointmentTime: '11:00 AM',
-    employeeId: 'E125',
-  },
-  {
-    id: 6,
-    name: 'Emily Davis',
-    type: 'new',
-    status: 'Challan to be Paid',
-    appointmentDate: '2024-08-25',
-    reason: 'Fee payment',
-    mobile: '8888888888',
-    address: '303 Birch St',
-    email: 'emily.davis@example.com',
-  },
-  {
-    id: 7,
-    name: 'Michael Scott',
-    type: 'new',
-    status: 'Doc to be submitted',
-    appointmentDate: '2024-08-28',
-    reason: 'Final document submission',
-    mobile: '7777777777',
-    address: '404 Maple St',
-    email: 'michael.scott@example.com',
-  },
-  {
-    id: 8,
-    name: 'Mark Scott',
-    type: 'new',
-    status: 'Doc to be checked',
-    appointmentDate: '2024-08-28',
-    reason: 'Final document submission',
-    mobile: '985600084',
-    address: '404 Maple St',
-    email: 'mark.scott@example.com',
-  }
-];
-
-const CustomerList: React.FC<CustomerListProps> = ({ type }) => {
+const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [page, setPage] = useState(1);
+  const [meta, setMeta] = useState<Meta | null>(null); // Initialize meta as null
+  const [loading, setLoading] = useState(false);
+  const [noData, setNoData] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation();
-  const filteredCustomers = customers.filter(customer => {
-    if (type === 'upcoming') {
-      return customer.status === 'Approved';
+
+  const fetchCustomers = async (pageNum: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axiosInstance.get(`${config.CUSTOMERS_URL}`, {
+        params: { page: pageNum, limit: 10, searchText }, // Using searchText
+      });
+
+      const data = response.data;
+
+      if (data.customers && data.customers.length > 0) {
+        setCustomers(prev => (pageNum === 1 ? data.customers : [...prev, ...data.customers]));
+        setMeta(data.meta);
+        setNoData(false);
+      } else if (pageNum === 1) {
+        setNoData(true);
+      }
+    } catch (error) {
+      setError('Failed to fetch customers');
+      console.error('Error fetching customers:', error.message || error);
+    } finally {
+      setLoading(false);
     }
-    return customer.status !== 'Approved';
-  });
+  };
+
+  useEffect(() => {
+    setCustomers([]); // reset customers on new search
+    fetchCustomers(1); // fetch first page
+  }, [searchText]); // Fetch data when searchText changes
+
+  useEffect(() => {
+    if (page > 1) fetchCustomers(page);
+  }, [page]);
+
+  const handleLoadMore = () => {
+    if (!loading && meta && meta.page * meta.limit < meta.total) {
+      setPage(prev => prev + 1);
+    }
+  };
 
   return (
-    <View>
-      {filteredCustomers.map(customer => (
-        <View key={customer.id}>
-          <List.Item
-            title={customer.name}
-            description={`${customer.appointmentDate} - ${customer.reason}`}
-            onPress={() => navigation.navigate('CustomerDetailsPage', { customer })}
-            right={() => (
-              <Text style={styles.status}>
-                {customer.status}
-              </Text>
-            )}
-          />
-          <Divider />
+    <View style={{ flex: 1 }}>
+      {error && <Text style={styles.errorText}>{error}</Text>}
+      {noData && page === 1 ? (
+        <View style={styles.noDataView}>
+          <Text style={styles.noDataText}>No customers found</Text>
         </View>
-      ))}
+      ) : (
+        <FlatList
+          data={customers}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => (
+            <View key={item.id}>
+              <List.Item
+                title={item.name}
+                description={`Mobile: ${item.mobile}`}
+                onPress={() => navigation.navigate('CustomerDetailsPage', { customer_id: item.id })}
+                right={() => (
+                  <Text style={styles.enquiryId}>
+                    {item.enquiry_id ? `Enquiry ID: ${item.enquiry_id}` : 'No Enquiry'}
+                  </Text>
+                )}
+              />
+              <Divider />
+            </View>
+          )}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={loading ? <ActivityIndicator size="small" color="gray" /> : null}
+        />
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  status: {
+  enquiryId: {
     alignSelf: 'center',
     marginRight: 10,
     color: 'gray',
+  },
+  noDataView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noDataText: {
+    fontSize: 18,
+    color: 'gray',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    margin: 10,
   },
 });
 

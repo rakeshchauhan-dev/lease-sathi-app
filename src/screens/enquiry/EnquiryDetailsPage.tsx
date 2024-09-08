@@ -58,7 +58,7 @@ const EnquiryDetailsPage = () => {
       console.log('Making request to:', url);
 
       await axiosInstance.post(url);
-      navigation.navigate('CustomerListPage');
+      navigation.navigate('CustomerPage');
     } catch (error) {
       console.error('Error converting enquiry to customer:', error);
     }

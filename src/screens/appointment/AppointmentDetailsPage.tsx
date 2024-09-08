@@ -81,6 +81,7 @@ const AppointmentDetailsPage: React.FC<AppointmentDetailsPageProps> = ({ route }
           proofFile={proofFile}
           setProofFile={setProofFile}
           tokenID={appointment.token_id}
+          appointmentId={appointment.id}
           setCurrentForm={setCurrentForm}
         />
         {proofFile && (

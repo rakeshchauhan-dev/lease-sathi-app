@@ -9,6 +9,7 @@ interface UploadProofFormProps {
   proofFile: DocumentPickerResponse | null;
   setProofFile: (file: DocumentPickerResponse | null) => void;
   tokenID: number;
+  appointmentID: number; // Added appointmentID
   setCurrentForm: (form: string) => void;
 }
 
@@ -16,6 +17,7 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
   proofFile,
   setProofFile,
   tokenID,
+  appointmentID, // Ensure this is passed in the props
   setCurrentForm,
 }) => {
   const handleDocumentPick = async () => {
@@ -49,6 +51,7 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
     });
 
     try {
+      // Step 1: Upload the proof file
       const response = await axiosInstance.post(config.FILE_UPLOAD_URL, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -56,12 +59,25 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
       });
 
       if (response.status === 200) {
-        Alert.alert('Proof uploaded successfully');
-        setCurrentForm('Appointment Completed'); // Switch form state if needed
+
+        // Step 2: Update the appointment status after file upload
+        const statusUpdateResponse = await axiosInstance.put(`${config.APPOINTMENTS_URL}/status`, {
+          appointment_id: appointmentID, // Make sure appointmentID is used correctly
+          new_status: 'Completed',
+        });
+
+        if (statusUpdateResponse.status === 200) {
+          Alert.alert('Appointment status updated successfully');
+          
+          // Step 3: Set form state to 'Appointment Completed'
+          setCurrentForm('Appointment Completed');
+        } else {
+          Alert.alert('Failed to update appointment status');
+        }
       }
     } catch (error) {
-      console.error('Error uploading proof:', error);
-      Alert.alert('File upload failed');
+      console.error('Error uploading proof or updating status:', error);
+      Alert.alert('File upload or status update failed');
     }
   };
 
