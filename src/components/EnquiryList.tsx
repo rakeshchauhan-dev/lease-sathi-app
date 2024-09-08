@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, FlatList, Text, ActivityIndicator } from 'react-native';
 import { List, Divider } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../axiosInstance';
 import config from '../config';
 
@@ -63,10 +63,13 @@ const EnquiryList: React.FC<EnquiryListProps> = ({ searchText }) => {
     }
   };
 
-  useEffect(() => {
-    setEnquiries([]); // reset enquiries on new search
-    fetchEnquiries(1); // fetch first page
-  }, [searchText]); // Fetch data when searchText changes
+  useFocusEffect(
+    useCallback(() => {
+      // Reset enquiries and fetch the first page when the screen is focused
+      setEnquiries([]);
+      fetchEnquiries(1);
+    }, [searchText]) // Add dependencies like searchText if necessary
+  );
 
   useEffect(() => {
     if (page > 1) fetchEnquiries(page);

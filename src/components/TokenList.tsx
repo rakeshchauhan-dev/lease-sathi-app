@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, FlatList, Text, ActivityIndicator } from 'react-native';
 import { List, Divider } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../axiosInstance';
 import config from '../config';
 
@@ -66,10 +66,13 @@ const TokenList: React.FC<TokenListProps> = ({ searchText }) => {
     }
   };
 
-  useEffect(() => {
-    setTokens([]); // reset tokens on new search
-    fetchTokens(1); // fetch first page
-  }, [searchText]);
+  useFocusEffect(
+    useCallback(() => {
+      // Reset tokens and fetch the first page when the screen is focused
+      setTokens([]);
+      fetchTokens(1);
+    }, [searchText]) // Add searchText or other dependencies if needed
+  );
 
   useEffect(() => {
     if (page > 1) fetchTokens(page);

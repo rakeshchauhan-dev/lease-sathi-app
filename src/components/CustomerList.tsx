@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { View, StyleSheet, FlatList, Text, ActivityIndicator } from 'react-native';
 import { List, Divider } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import axiosInstance from '../axiosInstance';
 import config from '../config';
 
@@ -52,23 +52,26 @@ const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
         setNoData(true);
       }
     } catch (error) {
-        if (error instanceof Error) {
-            setError(error.message);
-            console.error('Error fetching customers:', error.message);
-          } else {
-            // Handle unexpected errors
-            setError('An unexpected error occurred');
-            console.error('Unknown error fetching customers:', error);
-          }
+      if (error instanceof Error) {
+        setError(error.message);
+        console.error('Error fetching customers:', error.message);
+      } else {
+        // Handle unexpected errors
+        setError('An unexpected error occurred');
+        console.error('Unknown error fetching customers:', error);
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    setCustomers([]); // reset customers on new search
-    fetchCustomers(1); // fetch first page
-  }, [searchText]); // Fetch data when searchText changes
+  useFocusEffect(
+    useCallback(() => {
+      // Reset customers and fetch the first page when the screen is focused
+      setCustomers([]);
+      fetchCustomers(1);
+    }, [searchText]) // Add dependencies if necessary, like searchText
+  );
 
   useEffect(() => {
     if (page > 1) fetchCustomers(page);
