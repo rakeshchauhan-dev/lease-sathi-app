@@ -2,7 +2,6 @@ import React from 'react';
 import { StyleSheet, Text, Alert } from 'react-native';
 import { Card, Title, Button } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
-import { useNavigation } from '@react-navigation/native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 
@@ -20,7 +19,6 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
   setCurrentForm, // Destructure setCurrentForm
 }) => {
 
-  const navigation = useNavigation();
   const handleDocumentPick = async () => {
     try {
       const result = await DocumentPicker.pick({
@@ -44,7 +42,7 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
 
     const formData = new FormData();
     formData.append('tokenID', String(tokenID));
-    formData.append('documentType', 'Government Document');
+    formData.append('documentType', 'Final Document');
     formData.append('file', {
       uri: checkedFile.uri,
       type: checkedFile.type,
@@ -60,7 +58,6 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
 
       if (response.status === 200) {
         Alert.alert('Document uploaded successfully');
-        navigation.navigate('DashboardMain'); // Navigate to DashboardMain after saving
 
         console.log('Form switched to Completed');
       }
