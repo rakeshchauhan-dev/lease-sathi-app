@@ -12,7 +12,7 @@ const EnquiryPage = () => {
   const [enquiries, setEnquiries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const fetchEnquiries = async () => {
     setLoading(true);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, Text, Alert } from 'react-native';
 import { Button, Card } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native'; // Import useRoute
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 import AppointmentInfo from './AppointmentInfo';
@@ -22,17 +22,11 @@ interface Appointment {
   updated_at: string;
 }
 
-interface AppointmentDetailsPageProps {
-  route: {
-    params: {
-      appointment_id: number;
-    };
-  };
-}
-
-const AppointmentDetailsPage: React.FC<AppointmentDetailsPageProps> = ({ route }) => {
-  const { appointment_id } = route.params;
+const AppointmentDetailsPage = () => {
+  const route = useRoute(); // Using useRoute to get the route params
+  const { appointment_id } = route.params as { appointment_id: number }; // Extract appointment_id from route params
   const navigation = useNavigation<any>();
+
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [currentForm, setCurrentForm] = useState<string>('Appointment Details');
   const [proofFile, setProofFile] = useState<any>(null);

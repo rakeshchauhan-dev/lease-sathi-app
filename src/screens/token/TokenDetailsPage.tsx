@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, Alert } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 import TokenInfo from './TokenInfo';
 import AwaitingFeedbackForm from './AwaitingFeedbackForm';
 import ChallanPaymentForm from './ChallanPaymentForm';
 import UploadRevisedDraftForm from './UploadRevisedDraftForm';
-import AddAppointmentForm from './AddAppointmentForm'; // Import the new form
+import AddAppointmentForm from './AddAppointmentForm';
 import DocToBeSubmittedForm from './DocToBeSubmittedForm';
 import DocumentToBeCheckedForm from './DocumentToBeCheckedForm';
+import { useRoute } from '@react-navigation/native'; // Import useRoute
 
 interface Token {
   token_id: number;
@@ -21,22 +22,15 @@ interface Token {
   customer_mobile: string;
 }
 
-interface TokenDetailsPageProps {
-  route: {
-    params: {
-      token_id: number;
-    };
-  };
-}
+const TokenDetailsPage = () => {
+  const route = useRoute(); // Using useRoute to get the route params
+  const { token_id } = route.params as { token_id: number }; // Extract token_id from route params
 
-const TokenDetailsPage: React.FC<TokenDetailsPageProps> = ({ route }) => {
-  const { token_id } = route.params;
   const [token, setToken] = useState<Token | null>(null);
   const [currentForm, setCurrentForm] = useState<string>(''); // State to track the current form
   const [amount, setAmount] = useState('');
   const [governmentFee, setGovernmentFee] = useState('');
   const [checkedFile, setCheckedFile] = useState<any>(null); // State for handling the checked document file
-
 
   useEffect(() => {
     const fetchTokenDetails = async () => {
@@ -80,33 +74,33 @@ const TokenDetailsPage: React.FC<TokenDetailsPageProps> = ({ route }) => {
             setCurrentForm={setCurrentForm}
           />
         );
-        case 'Challan to be Paid':
-          return (
-            <ChallanPaymentForm
-              tokenID={token.token_id}
-              amount={amount}
-              governmentFee={governmentFee}
-              setAmount={setAmount}
-              setGovernmentFee={setGovernmentFee}
-              setCurrentForm={setCurrentForm}
-            />
-          );
-        case 'Doc to be submitted':
-          return (
-            <DocToBeSubmittedForm
-              tokenID={token.token_id}
-              setCurrentForm={setCurrentForm}
-            />
-          );
-          case 'Doc to be checked':
-            return (
-              <DocumentToBeCheckedForm
-              tokenID={token.token_id}
-              checkedFile={checkedFile}
-              setCheckedFile={setCheckedFile}
-              setCurrentForm={setCurrentForm}
-              />
-            );
+      case 'Challan to be Paid':
+        return (
+          <ChallanPaymentForm
+            tokenID={token.token_id}
+            amount={amount}
+            governmentFee={governmentFee}
+            setAmount={setAmount}
+            setGovernmentFee={setGovernmentFee}
+            setCurrentForm={setCurrentForm}
+          />
+        );
+      case 'Doc to be submitted':
+        return (
+          <DocToBeSubmittedForm
+            tokenID={token.token_id}
+            setCurrentForm={setCurrentForm}
+          />
+        );
+      case 'Doc to be checked':
+        return (
+          <DocumentToBeCheckedForm
+            tokenID={token.token_id}
+            checkedFile={checkedFile}
+            setCheckedFile={setCheckedFile}
+            setCurrentForm={setCurrentForm}
+          />
+        );
       default:
         return <Text>No specific form for this status.</Text>;
     }
@@ -115,7 +109,6 @@ const TokenDetailsPage: React.FC<TokenDetailsPageProps> = ({ route }) => {
   if (!token) {
     return <Text>Loading...</Text>;
   }
-
 
   return (
     <ScrollView>

@@ -7,7 +7,7 @@ import config from '../../config'; // Adjust the path as necessary
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddEnquiryPage = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const [name, setName] = useState('');
   const [mobileNo, setMobile] = useState('');
