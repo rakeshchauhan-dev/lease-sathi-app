@@ -4,6 +4,7 @@ import { Card, Title, Button } from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 interface DocumentToBeCheckedFormProps {
   checkedFile: any;
@@ -18,6 +19,7 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
   tokenID,
   setCurrentForm, // Destructure setCurrentForm
 }) => {
+  const navigation = useNavigation(); // Initialize navigation hook
 
   const handleDocumentPick = async () => {
     try {
@@ -58,6 +60,9 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
 
       if (response.status === 200) {
         Alert.alert('Document uploaded successfully');
+        
+        // Navigate to the main dashboard
+        navigation.navigate('DashboardMain');  // Assuming your dashboard route is named 'Dashboard'
 
         console.log('Form switched to Completed');
       }
