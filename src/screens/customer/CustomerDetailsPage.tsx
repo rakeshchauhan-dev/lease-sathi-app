@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, Text } from 'react-native';
-import { Card } from 'react-native-paper';
 import { useRoute } from '@react-navigation/native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';

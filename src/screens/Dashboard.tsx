@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, TextInput } from 'react-native';
-import { Title, Divider } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import TokenList from '../components/TokenList';
 
 const Dashboard = () => {

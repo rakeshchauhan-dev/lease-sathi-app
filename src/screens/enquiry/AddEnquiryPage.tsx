@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import {  StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { TextInput, Button, Card, Title, Paragraph } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 import config from '../../config'; // Adjust the path as necessary
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosInstance from '../../axiosInstance';
