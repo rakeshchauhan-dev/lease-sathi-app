@@ -19,7 +19,7 @@ const Dashboard = () => {
     <View style={styles.container}>
       <TextInput
         style={styles.searchBar}
-        placeholder="Search Customers..."
+        placeholder="Search Tokens..."
         value={searchText}
         onChangeText={setSearchText}
       />

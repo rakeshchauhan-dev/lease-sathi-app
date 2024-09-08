@@ -12,11 +12,11 @@ import NewCustomerPage from '../screens/customer/NewCustomerPage';
 import TokenDetailsPage from '../screens/token/TokenDetailsPage';
 import EnquiryDetailsPage from '../screens/enquiry/EnquiryDetailsPage';
 import AppointmentDetailsPage from '../screens/appointment/AppointmentDetailsPage';
-import EnquiryPage from '../screens/enquiry/EnquiryPage';
 import CreateDraft from '../screens/CreateDraft';
 import AddEnquiryPage from '../screens/enquiry/AddEnquiryPage';
 import LoginScreen from '../screens/LoginScreen';
 import CustomerDashboard from '../screens/CustomerDashboard';
+import EnquiryDashboard from '../screens/EnquiryDashboard';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -31,7 +31,7 @@ const DashboardStack = () => (
 
 const EnquiryStack = () => (
   <Stack.Navigator>
-    <Stack.Screen name="EnquiryPage" component={EnquiryPage} options={{ headerShown: false }} />
+    <Stack.Screen name="EnquiryDashboard" component={EnquiryDashboard} options={{ headerShown: false }} />
     <Stack.Screen name="AddEnquiryPage" component={AddEnquiryPage} options={{ title: 'Add Enquiry' }} />
     <Stack.Screen name="EnquiryDetailsPage" component={EnquiryDetailsPage} options={{ title: 'Enquiry Details' }} />
     <Stack.Screen name="CreateDraft" component={CreateDraft} options={{ title: 'Create Draft' }} />
@@ -61,10 +61,10 @@ const MainTabNavigator = () => (
           case 'Dashboard':
             iconName = 'home';
             break;
-          case 'Enquiry':
+          case 'Enquiries':
             iconName = 'search';
             break;
-          case 'Customer':
+          case 'Customers':
             iconName = 'person';
             break;
           case 'Appointments':
@@ -81,9 +81,9 @@ const MainTabNavigator = () => (
     })}
   >
     <Tab.Screen name="Dashboard" component={DashboardStack} />
-    <Tab.Screen name="Enquiry" component={EnquiryStack} />
-    <Tab.Screen name="Customer" component={CustomerStack} />
     <Tab.Screen name="Appointments" component={AppointmentStack} />
+    <Tab.Screen name="Customers" component={CustomerStack} />
+    <Tab.Screen name="Enquiries" component={EnquiryStack} />
   </Tab.Navigator>
 );
 
