@@ -19,7 +19,7 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
   tokenID,
   setCurrentForm, // Destructure setCurrentForm
 }) => {
-  const navigation = useNavigation(); // Initialize navigation hook
+const navigation = useNavigation<any>(); // Typed useNavigation
 
   const handleDocumentPick = async () => {
     try {

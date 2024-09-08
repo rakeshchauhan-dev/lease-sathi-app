@@ -17,7 +17,7 @@ interface AddAppointmentFormProps {
 }
 
 const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCurrentForm }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>(); // Typed useNavigation
   const [appointmentDate, setAppointmentDate] = useState<Date | undefined>(undefined);
   const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(undefined);
   const [employeeId, setEmployeeId] = useState('');

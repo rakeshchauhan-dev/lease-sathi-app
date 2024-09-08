@@ -33,7 +33,7 @@ const TokenList: React.FC<TokenListProps> = ({ searchText }) => {
   const [loading, setLoading] = useState(false);
   const [noData, setNoData] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const fetchTokens = async (pageNum: number) => {
     setLoading(true);
@@ -53,8 +53,14 @@ const TokenList: React.FC<TokenListProps> = ({ searchText }) => {
         setNoData(true);
       }
     } catch (error) {
-      setError('Failed to fetch tokens');
-      console.error('Error fetching tokens:', error.message || error);
+      if (error instanceof Error) {
+        setError(error.message);
+        console.error('Error fetching tokens:', error.message);
+      } else {
+        // Handle unexpected errors
+        setError('An unexpected error occurred');
+        console.error('Unknown error fetching tokens:', error);
+      }
     } finally {
       setLoading(false);
     }

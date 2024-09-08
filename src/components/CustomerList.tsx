@@ -52,8 +52,14 @@ const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
         setNoData(true);
       }
     } catch (error) {
-      setError('Failed to fetch customers');
-      console.error('Error fetching customers:', error.message || error);
+        if (error instanceof Error) {
+            setError(error.message);
+            console.error('Error fetching customers:', error.message);
+          } else {
+            // Handle unexpected errors
+            setError('An unexpected error occurred');
+            console.error('Unknown error fetching customers:', error);
+          }
     } finally {
       setLoading(false);
     }
@@ -90,7 +96,7 @@ const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
               <List.Item
                 title={item.name}
                 description={`Mobile: ${item.mobile}`}
-                onPress={() => navigation.navigate('CustomerDetailsPage', { customer_id: item.id })}
+                // onPress={() => navigation.navigate('CustomerDetailsPage', { customer_id: item.id })}
                 right={() => (
                   <Text style={styles.enquiryId}>
                     {item.enquiry_id ? `Enquiry ID: ${item.enquiry_id}` : 'No Enquiry'}

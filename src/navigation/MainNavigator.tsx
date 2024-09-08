@@ -9,7 +9,6 @@ import { View, ActivityIndicator, Text } from 'react-native';
 import Dashboard from '../screens/Dashboard';
 import AppointmentDashboard from '../screens/AppointmentDashboard';
 import NewCustomerPage from '../screens/customer/NewCustomerPage';
-import CustomerDetailsPage from '../screens/customer/CustomerDetailsPage';
 import TokenDetailsPage from '../screens/token/TokenDetailsPage';
 import EnquiryDetailsPage from '../screens/enquiry/EnquiryDetailsPage';
 import AppointmentDetailsPage from '../screens/appointment/AppointmentDetailsPage';
@@ -26,7 +25,6 @@ const DashboardStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="DashboardMain" component={Dashboard} options={{ headerShown: false }} />
     <Stack.Screen name="NewCustomerPage" component={NewCustomerPage} options={{ title: 'New Customer' }} />
-    <Stack.Screen name="CustomerDetailsPage" component={CustomerDetailsPage} options={{ title: 'Customer Details' }} />
     <Stack.Screen name="TokenDetailsPage" component={TokenDetailsPage} options={{ title: 'Token Details' }} />
   </Stack.Navigator>
 );

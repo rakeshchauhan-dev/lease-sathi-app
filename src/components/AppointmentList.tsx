@@ -36,7 +36,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ searchText }) => {
   const [loading, setLoading] = useState(false);
   const [noData, setNoData] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   const fetchAppointments = async (pageNum: number) => {
     setLoading(true);
@@ -56,8 +56,14 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ searchText }) => {
         setNoData(true);
       }
     } catch (error) {
-      setError('Failed to fetch appointments');
-      console.error('Error fetching appointments:', error.message || error);
+      if (error instanceof Error) {
+        setError(error.message);
+        console.error('Error fetching appointments:', error.message);
+      } else {
+        // Handle unexpected errors
+        setError('An unexpected error occurred');
+        console.error('Unknown error fetching appointments:', error);
+      }
     } finally {
       setLoading(false);
     }

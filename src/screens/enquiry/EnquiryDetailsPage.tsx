@@ -5,14 +5,12 @@ import { useRoute, useNavigation } from '@react-navigation/native';
 import config from '../../config';
 import axiosInstance from '../../axiosInstance';
 
-
 interface Address {
   id: number;
-  address: string; // Or you may have more specific fields like street, city, etc.
+  address: string;
   created_at: string;
   updated_at: string;
 }
-
 
 interface Enquiry {
   id: number;
@@ -29,16 +27,16 @@ interface Enquiry {
 
 const EnquiryDetailsPage = () => {
   const route = useRoute();
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>(); // Typed useNavigation
   const { id } = route.params as { id: number };
   
   const [enquiry, setEnquiry] = useState<Enquiry | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    console.log(`Fetching details for Enquiry ID: ${id}`); // Add this line to log the ID
+    console.log(`Fetching details for Enquiry ID: ${id}`);
     const fetchEnquiryDetails = async () => {
-      console.log('ENQUIRIES_URL:', config.ENQUIRIES_URL); // Existing debug line
+      console.log('ENQUIRIES_URL:', config.ENQUIRIES_URL);
       try {
         const response = await axiosInstance.get(`${config.ENQUIRIES_URL}/${id}`);
         setEnquiry(response.data);
@@ -48,7 +46,7 @@ const EnquiryDetailsPage = () => {
         setLoading(false);
       }
     };
-  
+
     fetchEnquiryDetails();
   }, [id]);
 

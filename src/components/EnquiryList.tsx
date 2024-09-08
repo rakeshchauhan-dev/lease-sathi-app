@@ -18,7 +18,7 @@ interface EnquiryListProps {
 }
 
 const EnquiryList: React.FC<EnquiryListProps> = ({ enquiries }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   // Debugging logs to inspect data
   console.log('EnquiryList enquiries:', enquiries);

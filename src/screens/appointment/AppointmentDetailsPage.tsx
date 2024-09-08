@@ -4,9 +4,9 @@ import { Button, Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
-import AppointmentInfo from './AppointmentInfo'; // Component to display appointment information
-import RescheduleAppointmentForm from './RescheduleAppointmentForm'; // Form for rescheduling the appointment
-import UploadProofForm from './UploadProofForm'; // Import the new UploadProofForm
+import AppointmentInfo from './AppointmentInfo';
+import RescheduleAppointmentForm from './RescheduleAppointmentForm';
+import UploadProofForm from './UploadProofForm';
 
 interface Appointment {
   id: number;
@@ -32,7 +32,7 @@ interface AppointmentDetailsPageProps {
 
 const AppointmentDetailsPage: React.FC<AppointmentDetailsPageProps> = ({ route }) => {
   const { appointment_id } = route.params;
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [currentForm, setCurrentForm] = useState<string>('Appointment Details');
   const [proofFile, setProofFile] = useState<any>(null);
@@ -53,7 +53,7 @@ const AppointmentDetailsPage: React.FC<AppointmentDetailsPageProps> = ({ route }
   const handleProofUploadSubmit = async () => {
     try {
       Alert.alert('Success', 'Proof uploaded successfully!');
-      navigation.navigate('AppointmentDashboard'); // Navigate back to the Appointment Dashboard
+      navigation.navigate('AppointmentDashboard');
     } catch (error) {
       console.error('Error uploading proof:', error);
       Alert.alert('Error', 'Failed to upload proof. Please try again.');
@@ -63,7 +63,6 @@ const AppointmentDetailsPage: React.FC<AppointmentDetailsPageProps> = ({ route }
   const renderFormByStatus = () => {
     if (!appointment) return null;
 
-    // Show Reschedule form if currentForm is 'Reschedule Appointment'
     if (currentForm === 'Reschedule Appointment') {
       return (
         <RescheduleAppointmentForm
@@ -74,14 +73,13 @@ const AppointmentDetailsPage: React.FC<AppointmentDetailsPageProps> = ({ route }
       );
     }
 
-    // Show UploadProofForm otherwise
     return (
       <>
         <UploadProofForm
           proofFile={proofFile}
           setProofFile={setProofFile}
           tokenID={appointment.token_id}
-          appointmentId={appointment.id}
+          appointmentID={appointment.id}
           setCurrentForm={setCurrentForm}
         />
         {proofFile && (
@@ -103,13 +101,8 @@ const AppointmentDetailsPage: React.FC<AppointmentDetailsPageProps> = ({ route }
 
   return (
     <ScrollView>
-      {/* Display Appointment Information */}
       <AppointmentInfo appointment={appointment} />
-
-      {/* Render either Reschedule Form or Upload Proof Form */}
       {renderFormByStatus()}
-
-      {/* Card for Reschedule Appointment Button */}
       {currentForm !== 'Reschedule Appointment' && (
         <Card style={{ margin: 20 }}>
           <Card.Content>
