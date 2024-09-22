@@ -48,7 +48,7 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axiosInstance.get(`${config.EMPLOYEES_URL}`);
+        const response = await axiosInstance.get(`${config.EMPLOYEES_URL}/visitors`);
         setEmployees(response.data);
       } catch (error) {
         console.error('Error fetching employees:', error);
