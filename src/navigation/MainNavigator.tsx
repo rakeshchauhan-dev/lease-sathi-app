@@ -40,7 +40,7 @@ const EnquiryStack = () => (
 const CustomerStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="CustomerDashboard" component={CustomerDashboard} options={{ headerShown: false }} />
-    <Stack.Screen name="CustomerDetailsPage" component={CustomerDetailsPage} options={{ title: 'Appointment Details' }} />
+    <Stack.Screen name="CustomerDetailsPage" component={CustomerDetailsPage} options={{ title: 'Customer Details' }} />
 
   </Stack.Navigator>
 );

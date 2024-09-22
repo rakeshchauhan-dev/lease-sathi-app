@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, Text, Alert, View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Button, Card, Paragraph, Title } from 'react-native-paper';
-import { useRoute, useNavigation } from '@react-navigation/native'; // Import useRoute
+import { useRoute, useNavigation } from '@react-navigation/native';
+import DocumentPicker from 'react-native-document-picker'; // Import Document Picker
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 
@@ -27,11 +28,12 @@ interface Enquiry {
 
 const EnquiryDetailsPage = () => {
   const route = useRoute();
-  const { id } = route.params as { id: number }; // Extract enquiry id from route params
+  const { id } = route.params as { id: number };
   const navigation = useNavigation<any>();
 
   const [enquiry, setEnquiry] = useState<Enquiry | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [file, setFile] = useState<any>(null); // State to store the selected file
 
   useEffect(() => {
     const fetchEnquiryDetails = async () => {
@@ -48,9 +50,40 @@ const EnquiryDetailsPage = () => {
     fetchEnquiryDetails();
   }, [id]);
 
-  const handleConvertToCustomer = async () => {
+  // File Picker Function
+  const handleFilePick = async () => {
     try {
-      await axiosInstance.post(`${config.ENQUIRIES_URL}/${id}/customers`);
+      const result = await DocumentPicker.pickSingle({
+        type: [DocumentPicker.types.allFiles],
+      });
+      setFile(result);
+    } catch (error) {
+      if (DocumentPicker.isCancel(error)) {
+        Alert.alert('Cancelled', 'No file selected');
+      } else {
+        console.error('File picker error:', error);
+      }
+    }
+  };
+
+  const handleConvertToCustomer = async () => {
+    const formData = new FormData();
+    formData.append('enquiry_id', id);
+
+    if (file) {
+      formData.append('files', {
+        uri: file.uri,
+        type: file.type,
+        name: file.name,
+      });
+    }
+
+    try {
+      await axiosInstance.post(`${config.ENQUIRIES_URL}/${id}/customers`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       Alert.alert('Success', 'Enquiry converted to customer successfully!');
       navigation.navigate('EnquiryDashboard');
     } catch (error) {
@@ -95,15 +128,14 @@ const EnquiryDetailsPage = () => {
       <Card style={styles.card}>
         <Card.Content>
           <Title>Convert Enquiry to Customer</Title>
-          <Paragraph>
-            Would you like to convert this enquiry into a customer by scheduling an appointment?
-          </Paragraph>
+          <Paragraph>Would you like to convert this enquiry into a customer by scheduling an appointment?</Paragraph>
         </Card.Content>
-        <Button
-          mode="contained"
-          onPress={handleConvertToCustomer}
-          style={styles.button}
-        >
+        
+        <Button mode="outlined" onPress={handleFilePick} style={styles.button}>
+          {file ? `Selected File: ${file.name}` : 'Attach File'}
+        </Button>
+
+        <Button mode="contained" onPress={handleConvertToCustomer} style={styles.button}>
           Convert to Customer
         </Button>
       </Card>

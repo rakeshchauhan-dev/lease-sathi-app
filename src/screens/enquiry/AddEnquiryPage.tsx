@@ -24,14 +24,14 @@ const AddEnquiryPage = () => {
     setLoading(true);
     const newEnquiry = {
       name,
-      mobileNo,
+      mobile_no : mobileNo,
       address,
       tenure,
       rent :parseFloat(rent),
       deposit: parseFloat(deposit),
       increment: parseFloat(increment),
-      extraService,
-      quoted: parseFloat(quoted),
+      extra_service_visit: extraService,
+      quoted_amount: parseFloat(quoted),
     };
 
     try {

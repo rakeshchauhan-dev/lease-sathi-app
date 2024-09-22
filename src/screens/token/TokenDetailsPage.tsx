@@ -31,6 +31,7 @@ const TokenDetailsPage = () => {
   const [amount, setAmount] = useState('');
   const [governmentFee, setGovernmentFee] = useState('');
   const [checkedFile, setCheckedFile] = useState<any>(null); // State for handling the checked document file
+  const [draftFile, setDraftFile] = useState<any>(null); // State for handling the checked document file
 
   useEffect(() => {
     const fetchTokenDetails = async () => {
@@ -60,9 +61,8 @@ const TokenDetailsPage = () => {
       case 'Under Revision':
         return (
           <UploadRevisedDraftForm
-            draftFile={null}
-            setDraftFile={() => {}}
-            handleSubmit={() => {}}
+            draftFile={draftFile}
+            setDraftFile={setDraftFile}
             tokenID={token.token_id}
             setCurrentForm={setCurrentForm}
           />

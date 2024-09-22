@@ -8,7 +8,6 @@ import config from '../../config';
 interface UploadRevisedDraftFormProps {
   draftFile: any;
   setDraftFile: (file: any) => void;
-  handleSubmit: () => void;
   tokenID: number;
   setCurrentForm: (form: string) => void; // Add setCurrentForm prop
 }
@@ -16,9 +15,8 @@ interface UploadRevisedDraftFormProps {
 const UploadRevisedDraftForm: React.FC<UploadRevisedDraftFormProps> = ({
   draftFile,
   setDraftFile,
-  handleSubmit,
   tokenID,
-  setCurrentForm, // Destructure setCurrentForm
+  setCurrentForm,
 }) => {
   const handleDocumentPick = async () => {
     try {
@@ -44,14 +42,14 @@ const UploadRevisedDraftForm: React.FC<UploadRevisedDraftFormProps> = ({
     const formData = new FormData();
     formData.append('tokenID', String(tokenID));
     formData.append('documentType', 'Revised Document');
-    formData.append('file', {
+    formData.append('files', {
       uri: draftFile.uri,
       type: draftFile.type,
       name: draftFile.name,
     });
 
     try {
-      const response = await axiosInstance.post(config.FILE_UPLOAD_URL, formData, {
+      const response = await axiosInstance.post(`${config.TOKENS_URL}/upload-file`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -59,8 +57,7 @@ const UploadRevisedDraftForm: React.FC<UploadRevisedDraftFormProps> = ({
 
       if (response.status === 200) {
         Alert.alert('File uploaded successfully');
-        setCurrentForm('Awaiting Feedback'); // Switch back to Awaiting Feedback after upload
-        console.log('Form switched to Awaiting Feedback');
+        setCurrentForm('Awaiting Feedback');
       }
     } catch (error) {
       console.error('Error uploading file:', error);

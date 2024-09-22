@@ -3,6 +3,7 @@ import { StyleSheet, Text, Alert } from 'react-native';
 import { Card, Title, Button } from 'react-native-paper';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 import axiosInstance from '../../axiosInstance';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import config from '../../config';
 
 interface UploadProofFormProps {
@@ -20,6 +21,7 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
   appointmentID, // Ensure this is passed in the props
   setCurrentForm,
 }) => {
+  const navigation = useNavigation<any>(); // Typed useNavigation
   const handleDocumentPick = async () => {
     try {
       const result = await DocumentPicker.pick({
@@ -44,7 +46,8 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
     const formData = new FormData();
     formData.append('tokenID', String(tokenID));
     formData.append('documentType', 'Appointment Completed');
-    formData.append('file', {
+    formData.append('appointmentID',String(appointmentID))
+    formData.append('files', {
       uri: proofFile.uri,
       type: proofFile.type,
       name: proofFile.name,
@@ -52,7 +55,7 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
 
     try {
       // Step 1: Upload the proof file
-      const response = await axiosInstance.post(config.FILE_UPLOAD_URL, formData, {
+      const response = await axiosInstance.post(`${config.APPOINTMENTS_URL}/upload-file`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -60,21 +63,19 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
 
       if (response.status === 200) {
 
-        // Step 2: Update the appointment status after file upload
-        const statusUpdateResponse = await axiosInstance.put(`${config.APPOINTMENTS_URL}/status`, {
-          appointment_id: appointmentID, // Make sure appointmentID is used correctly
-          new_status: 'Completed',
-        });
+        // // Step 2: Update the appointment status after file upload
+        // const statusUpdateResponse = await axiosInstance.put(`${config.APPOINTMENTS_URL}/status`, {
+        //   appointment_id: appointmentID, // Make sure appointmentID is used correctly
+        //   new_status: 'Completed',
+        // });
 
-        if (statusUpdateResponse.status === 200) {
+        // if (statusUpdateResponse.status === 200) {
           Alert.alert('Appointment status updated successfully');
-          
-          // Step 3: Set form state to 'Appointment Completed'
-          setCurrentForm('Appointment Completed');
+          navigation.navigate('AppointmentDashboard');  // Assuming your dashboard route is named 'Dashboard'
+
         } else {
           Alert.alert('Failed to update appointment status');
         }
-      }
     } catch (error) {
       console.error('Error uploading proof or updating status:', error);
       Alert.alert('File upload or status update failed');

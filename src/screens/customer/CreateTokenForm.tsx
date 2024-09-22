@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, TextInput, Alert } from 'react-native';
 import { Card, Title, Button } from 'react-native-paper';
-import DocumentPicker from 'react-native-document-picker';
+import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 import axiosInstance from '../../axiosInstance';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 import config from '../../config';
 
 interface CreateTokenFormProps {
@@ -12,7 +13,8 @@ interface CreateTokenFormProps {
 const CreateTokenForm: React.FC<CreateTokenFormProps> = ({ customerID }) => {
   const [tokenNo, setTokenNo] = useState('');
   const [password, setPassword] = useState('');
-  const [file, setFile] = useState<any>(null); // State to store the file
+  const navigation = useNavigation<any>(); // Typed useNavigation
+  const [file, setFile] = useState<DocumentPickerResponse | null>(null); // Single file state
 
   const handleCreateToken = async () => {
     if (!tokenNo || !password) {
@@ -25,19 +27,19 @@ const CreateTokenForm: React.FC<CreateTokenFormProps> = ({ customerID }) => {
       return;
     }
 
-    // Create form data to send the token and file to the backend
     const formData = new FormData();
     formData.append('tokenNo', tokenNo);
     formData.append('password', password);
-    formData.append('customerID', customerID);
-    formData.append('file', {
+    formData.append('customerID', String(customerID));
+
+    // Ensure the correct field name for the single file
+    formData.append('files', {
       uri: file.uri,
       type: file.type,
       name: file.name,
     });
 
     try {
-      // Handle the token creation (e.g., send to backend)
       const response = await axiosInstance.post(`${config.TOKENS_URL}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -46,19 +48,29 @@ const CreateTokenForm: React.FC<CreateTokenFormProps> = ({ customerID }) => {
 
       if (response.status === 200) {
         Alert.alert('Success', 'Token created successfully!');
+        navigation.navigate('CustomerDashboard');  // Assuming your dashboard route is named 'Dashboard'
+
       }
-    } catch (error) {
-      console.error('Error creating token:', error);
-      Alert.alert('Error', 'Failed to create token');
+    } catch (error: any) {
+      if (error.response) {
+        console.error('Error response:', error.response);
+        Alert.alert('Error', error.response.data.message || 'Failed to create token');
+      } else if (error.request) {
+        console.error('No response from server:', error.request);
+        Alert.alert('Error', 'No response from server');
+      } else {
+        console.error('Error', error.message);
+        Alert.alert('Error', error.message || 'Something went wrong');
+      }
     }
   };
 
   const handleFilePick = async () => {
     try {
       const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles],
+        type: [DocumentPicker.types.allFiles], // Allows all file types
       });
-      setFile(result[0]); // Store the selected file
+      setFile(result[0]); // Set the first selected file
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User cancelled file picker');
@@ -91,7 +103,7 @@ const CreateTokenForm: React.FC<CreateTokenFormProps> = ({ customerID }) => {
           onPress={handleFilePick}
           style={styles.button}
         >
-          {file ? `File: ${file.name}` : 'Upload File'}
+          {file ? `Selected File: ${file.name}` : 'Upload File'}
         </Button>
 
         <View style={styles.buttonContainer}>

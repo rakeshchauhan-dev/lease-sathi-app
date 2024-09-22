@@ -45,14 +45,14 @@ const navigation = useNavigation<any>(); // Typed useNavigation
     const formData = new FormData();
     formData.append('tokenID', String(tokenID));
     formData.append('documentType', 'Final Document');
-    formData.append('file', {
+    formData.append('files', {
       uri: checkedFile.uri,
       type: checkedFile.type,
       name: checkedFile.name,
     });
 
     try {
-      const response = await axiosInstance.post(config.FILE_UPLOAD_URL, formData, {
+      const response = await axiosInstance.post(`${config.TOKENS_URL}/upload-file`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
