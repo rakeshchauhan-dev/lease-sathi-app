@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, Alert } from 'react-native';
+import { ScrollView, Text } from 'react-native';
 import { Button, Card } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/native'; // Import useRoute
+import { useNavigation, useRoute } from '@react-navigation/native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 import AppointmentInfo from './AppointmentInfo';
@@ -23,13 +23,10 @@ interface Appointment {
 }
 
 const AppointmentDetailsPage = () => {
-  const route = useRoute(); // Using useRoute to get the route params
-  const { appointment_id } = route.params as { appointment_id: number }; // Extract appointment_id from route params
-  const navigation = useNavigation<any>();
-
+  const route = useRoute();
+  const { appointment_id } = route.params as { appointment_id: number };
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [currentForm, setCurrentForm] = useState<string>('Appointment Details');
-  const [proofFile, setProofFile] = useState<any>(null);
 
   useEffect(() => {
     const fetchAppointmentDetails = async () => {
@@ -43,16 +40,6 @@ const AppointmentDetailsPage = () => {
 
     fetchAppointmentDetails();
   }, [appointment_id]);
-
-  const handleProofUploadSubmit = async () => {
-    try {
-      Alert.alert('Success', 'Proof uploaded successfully!');
-      navigation.navigate('AppointmentDashboard');
-    } catch (error) {
-      console.error('Error uploading proof:', error);
-      Alert.alert('Error', 'Failed to upload proof. Please try again.');
-    }
-  };
 
   const renderFormByStatus = () => {
     if (!appointment) return null;
@@ -68,24 +55,11 @@ const AppointmentDetailsPage = () => {
     }
 
     return (
-      <>
-        <UploadProofForm
-          proofFile={proofFile}
-          setProofFile={setProofFile}
-          tokenID={appointment.token_id}
-          appointmentID={appointment.id}
-          setCurrentForm={setCurrentForm}
-        />
-        {proofFile && (
-          <Button
-            mode="contained"
-            onPress={handleProofUploadSubmit}
-            style={{ marginTop: 10 }}
-          >
-            Submit Proof
-          </Button>
-        )}
-      </>
+      <UploadProofForm
+        tokenID={appointment.token_id}
+        appointmentID={appointment.id}
+        setCurrentForm={setCurrentForm}
+      />
     );
   };
 

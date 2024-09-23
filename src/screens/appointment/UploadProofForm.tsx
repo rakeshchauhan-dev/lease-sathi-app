@@ -3,31 +3,29 @@ import { StyleSheet, Text, Alert } from 'react-native';
 import { Card, Title, Button } from 'react-native-paper';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 import axiosInstance from '../../axiosInstance';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation } from '@react-navigation/native';
 import config from '../../config';
 
 interface UploadProofFormProps {
-  proofFile: DocumentPickerResponse | null;
-  setProofFile: (file: DocumentPickerResponse | null) => void;
   tokenID: number;
-  appointmentID: number; // Added appointmentID
+  appointmentID: number;
   setCurrentForm: (form: string) => void;
 }
 
 const UploadProofForm: React.FC<UploadProofFormProps> = ({
-  proofFile,
-  setProofFile,
   tokenID,
-  appointmentID, // Ensure this is passed in the props
+  appointmentID,
   setCurrentForm,
 }) => {
-  const navigation = useNavigation<any>(); // Typed useNavigation
+  const [proofFile, setProofFile] = React.useState<DocumentPickerResponse | null>(null);
+  const navigation = useNavigation<any>();
+
   const handleDocumentPick = async () => {
     try {
       const result = await DocumentPicker.pick({
-        type: [DocumentPicker.types.images, DocumentPicker.types.allFiles], // Restrict to images only
+        type: [DocumentPicker.types.images, DocumentPicker.types.allFiles],
       });
-      setProofFile(result[0]); // Set the selected file (first file in the array)
+      setProofFile(result[0]);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User cancelled the picker');
@@ -46,7 +44,7 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
     const formData = new FormData();
     formData.append('tokenID', String(tokenID));
     formData.append('documentType', 'Appointment Completed');
-    formData.append('appointmentID',String(appointmentID))
+    formData.append('appointmentID', String(appointmentID));
     formData.append('files', {
       uri: proofFile.uri,
       type: proofFile.type,
@@ -54,7 +52,6 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
     });
 
     try {
-      // Step 1: Upload the proof file
       const response = await axiosInstance.post(`${config.APPOINTMENTS_URL}/upload-file`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -62,23 +59,14 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
       });
 
       if (response.status === 200) {
-
-        // // Step 2: Update the appointment status after file upload
-        // const statusUpdateResponse = await axiosInstance.put(`${config.APPOINTMENTS_URL}/status`, {
-        //   appointment_id: appointmentID, // Make sure appointmentID is used correctly
-        //   new_status: 'Completed',
-        // });
-
-        // if (statusUpdateResponse.status === 200) {
-          Alert.alert('Appointment status updated successfully');
-          navigation.navigate('AppointmentDashboard');  // Assuming your dashboard route is named 'Dashboard'
-
-        } else {
-          Alert.alert('Failed to update appointment status');
-        }
+        Alert.alert('Proof uploaded successfully!');
+        navigation.navigate('AppointmentDashboard');
+      } else {
+        Alert.alert('Failed to upload proof');
+      }
     } catch (error) {
-      console.error('Error uploading proof or updating status:', error);
-      Alert.alert('File upload or status update failed');
+      console.error('Error uploading proof:', error);
+      Alert.alert('File upload failed');
     }
   };
 
@@ -101,13 +89,15 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
           </Text>
         )}
 
-        <Button
-          mode="contained"
-          onPress={handleFileUpload}
-          style={styles.submitButton}
-        >
-          Submit Proof
-        </Button>
+        {proofFile && (
+          <Button
+            mode="contained"
+            onPress={handleFileUpload}
+            style={styles.submitButton}
+          >
+            Submit Proof
+          </Button>
+        )}
       </Card.Content>
     </Card>
   );
