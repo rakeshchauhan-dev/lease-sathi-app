@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, Text } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {ScrollView, Text} from 'react-native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 import TokenInfo from './TokenInfo';
@@ -9,7 +9,7 @@ import UploadRevisedDraftForm from './UploadRevisedDraftForm';
 import AddAppointmentForm from './AddAppointmentForm';
 import DocToBeSubmittedForm from './DocToBeSubmittedForm';
 import DocumentToBeCheckedForm from './DocumentToBeCheckedForm';
-import { useRoute } from '@react-navigation/native'; // Import useRoute
+import {useRoute} from '@react-navigation/native'; // Import useRoute
 
 interface Token {
   token_id: number;
@@ -24,7 +24,7 @@ interface Token {
 
 const TokenDetailsPage = () => {
   const route = useRoute(); // Using useRoute to get the route params
-  const { token_id } = route.params as { token_id: number }; // Extract token_id from route params
+  const {token_id} = route.params as {token_id: number}; // Extract token_id from route params
 
   const [token, setToken] = useState<Token | null>(null);
   const [currentForm, setCurrentForm] = useState<string>(''); // State to track the current form
@@ -36,7 +36,9 @@ const TokenDetailsPage = () => {
   useEffect(() => {
     const fetchTokenDetails = async () => {
       try {
-        const response = await axiosInstance.get(`${config.TOKENS_URL}/${token_id}`);
+        const response = await axiosInstance.get(
+          `${config.TOKENS_URL}/${token_id}`,
+        );
         setToken(response.data);
         setCurrentForm(response.data.status); // Set initial form based on token status
       } catch (error) {
@@ -48,7 +50,9 @@ const TokenDetailsPage = () => {
   }, [token_id]);
 
   const renderFormByStatus = () => {
-    if (!token) return null;
+    if (!token) {
+      return null;
+    }
 
     switch (currentForm) {
       case 'Awaiting Feedback':

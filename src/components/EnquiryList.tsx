@@ -1,7 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, FlatList, Text, ActivityIndicator } from 'react-native';
-import { List, Divider } from 'react-native-paper';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import React, {useEffect, useState, useCallback} from 'react';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
+import {List, Divider} from 'react-native-paper';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import axiosInstance from '../axiosInstance';
 import config from '../config';
 
@@ -21,10 +27,10 @@ interface Meta {
 }
 
 interface EnquiryListProps {
-  searchText: string;  // Prop from parent component
+  searchText: string; // Prop from parent component
 }
 
-const EnquiryList: React.FC<EnquiryListProps> = ({ searchText }) => {
+const EnquiryList: React.FC<EnquiryListProps> = ({searchText}) => {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<Meta | null>(null); // Initialize meta as null
@@ -38,13 +44,15 @@ const EnquiryList: React.FC<EnquiryListProps> = ({ searchText }) => {
     setError(null);
     try {
       const response = await axiosInstance.get(`${config.ENQUIRIES_URL}`, {
-        params: { page: pageNum, limit: 10, searchText }, // Using searchText
+        params: {page: pageNum, limit: 10, searchText}, // Using searchText
       });
 
       const data = response.data;
 
       if (data.enquiries && data.enquiries.length > 0) {
-        setEnquiries(prev => (pageNum === 1 ? data.enquiries : [...prev, ...data.enquiries]));
+        setEnquiries(prev =>
+          pageNum === 1 ? data.enquiries : [...prev, ...data.enquiries],
+        );
         setMeta(data.meta);
         setNoData(false);
       } else if (pageNum === 1) {
@@ -68,11 +76,13 @@ const EnquiryList: React.FC<EnquiryListProps> = ({ searchText }) => {
       // Reset enquiries and fetch the first page when the screen is focused
       setEnquiries([]);
       fetchEnquiries(1);
-    }, [searchText]) // Add dependencies like searchText if necessary
+    }, [searchText]), // Add dependencies like searchText if necessary
   );
 
   useEffect(() => {
-    if (page > 1) fetchEnquiries(page);
+    if (page > 1) {
+      fetchEnquiries(page);
+    }
   }, [page]);
 
   const handleLoadMore = () => {
@@ -82,7 +92,7 @@ const EnquiryList: React.FC<EnquiryListProps> = ({ searchText }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       {error && <Text style={styles.errorText}>{error}</Text>}
       {noData && page === 1 ? (
         <View style={styles.noDataView}>
@@ -92,12 +102,14 @@ const EnquiryList: React.FC<EnquiryListProps> = ({ searchText }) => {
         <FlatList
           data={enquiries}
           keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View key={item.id}>
               <List.Item
                 title={item.name}
                 description={`Tenure: ${item.tenure}, Rent: ${item.rent}, Deposit: ${item.deposit}`}
-                onPress={() => navigation.navigate('EnquiryDetailsPage', { id: item.id })}
+                onPress={() =>
+                  navigation.navigate('EnquiryDetailsPage', {id: item.id})
+                }
                 right={() => <Text style={styles.status}>{item.status}</Text>}
               />
               <Divider />
@@ -105,7 +117,9 @@ const EnquiryList: React.FC<EnquiryListProps> = ({ searchText }) => {
           )}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={loading ? <ActivityIndicator size="small" color="gray" /> : null}
+          ListFooterComponent={
+            loading ? <ActivityIndicator size="small" color="gray" /> : null
+          }
         />
       )}
     </View>

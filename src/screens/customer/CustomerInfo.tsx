@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Card, Paragraph, Title } from 'react-native-paper';
+import {StyleSheet, View} from 'react-native';
+import {Card, Paragraph, Title} from 'react-native-paper';
 
 interface CustomerInfoProps {
   customer: {
@@ -11,7 +11,7 @@ interface CustomerInfoProps {
   };
 }
 
-const CustomerInfo: React.FC<CustomerInfoProps> = ({ customer }) => {
+const CustomerInfo: React.FC<CustomerInfoProps> = ({customer}) => {
   return (
     <Card style={styles.card}>
       <Card.Content>

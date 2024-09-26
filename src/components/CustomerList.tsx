@@ -1,7 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, FlatList, Text, ActivityIndicator } from 'react-native';
-import { List, Divider } from 'react-native-paper';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import React, {useEffect, useState, useCallback} from 'react';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
+import {List, Divider} from 'react-native-paper';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import axiosInstance from '../axiosInstance';
 import config from '../config';
 
@@ -22,10 +28,10 @@ interface Meta {
 }
 
 interface CustomerListProps {
-  searchText: string;  // Prop from parent component
+  searchText: string; // Prop from parent component
 }
 
-const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
+const CustomerList: React.FC<CustomerListProps> = ({searchText}) => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<Meta | null>(null); // Initialize meta as null
@@ -39,13 +45,15 @@ const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
     setError(null);
     try {
       const response = await axiosInstance.get(`${config.CUSTOMERS_URL}`, {
-        params: { page: pageNum, limit: 10, searchText }, // Using searchText
+        params: {page: pageNum, limit: 10, searchText}, // Using searchText
       });
 
       const data = response.data;
 
       if (data.customers && data.customers.length > 0) {
-        setCustomers(prev => (pageNum === 1 ? data.customers : [...prev, ...data.customers]));
+        setCustomers(prev =>
+          pageNum === 1 ? data.customers : [...prev, ...data.customers],
+        );
         setMeta(data.meta);
         setNoData(false);
       } else if (pageNum === 1) {
@@ -70,11 +78,13 @@ const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
       // Reset customers and fetch the first page when the screen is focused
       setCustomers([]);
       fetchCustomers(1);
-    }, [searchText]) // Add dependencies if necessary, like searchText
+    }, [searchText]), // Add dependencies if necessary, like searchText
   );
 
   useEffect(() => {
-    if (page > 1) fetchCustomers(page);
+    if (page > 1) {
+      fetchCustomers(page);
+    }
   }, [page]);
 
   const handleLoadMore = () => {
@@ -84,7 +94,7 @@ const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       {error && <Text style={styles.errorText}>{error}</Text>}
       {noData && page === 1 ? (
         <View style={styles.noDataView}>
@@ -94,15 +104,21 @@ const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
         <FlatList
           data={customers}
           keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View key={item.id}>
               <List.Item
                 title={item.name}
                 description={`Mobile: ${item.mobile}`}
-                onPress={() => navigation.navigate('CustomerDetailsPage', { customer_id: item.id })}
+                onPress={() =>
+                  navigation.navigate('CustomerDetailsPage', {
+                    customer_id: item.id,
+                  })
+                }
                 right={() => (
                   <Text style={styles.enquiryId}>
-                    {item.enquiry_id ? `Enquiry ID: ${item.enquiry_id}` : 'No Enquiry'}
+                    {item.enquiry_id
+                      ? `Enquiry ID: ${item.enquiry_id}`
+                      : 'No Enquiry'}
                   </Text>
                 )}
               />
@@ -111,7 +127,9 @@ const CustomerList: React.FC<CustomerListProps> = ({ searchText }) => {
           )}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={loading ? <ActivityIndicator size="small" color="gray" /> : null}
+          ListFooterComponent={
+            loading ? <ActivityIndicator size="small" color="gray" /> : null
+          }
         />
       )}
     </View>

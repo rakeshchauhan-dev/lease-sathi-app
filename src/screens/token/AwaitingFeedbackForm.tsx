@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Alert } from 'react-native';
-import { Card, Title, Button } from 'react-native-paper';
+import React, {useState} from 'react';
+import {StyleSheet, View, TextInput, Alert} from 'react-native';
+import {Card, Title, Button} from 'react-native-paper';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 
@@ -39,9 +39,12 @@ const AwaitingFeedbackForm: React.FC<AwaitingFeedbackFormProps> = ({
 
   const handleApprove = async () => {
     try {
-      const response = await axiosInstance.put(`${config.TOKENS_URL}/${tokenID}`, {
-        status: 'Schedule Appointment', // Assuming status is updated to 'Appointment'
-      });
+      const response = await axiosInstance.put(
+        `${config.TOKENS_URL}/${tokenID}`,
+        {
+          status: 'Schedule Appointment', // Assuming status is updated to 'Appointment'
+        },
+      );
 
       if (response.status === 200) {
         Alert.alert('Token status updated to Appointment');
@@ -66,10 +69,16 @@ const AwaitingFeedbackForm: React.FC<AwaitingFeedbackFormProps> = ({
           numberOfLines={4}
         />
         <View style={styles.buttonContainer}>
-          <Button mode="contained" onPress={handleSubmitFeedback} style={styles.button}>
+          <Button
+            mode="contained"
+            onPress={handleSubmitFeedback}
+            style={styles.button}>
             Submit Feedback
           </Button>
-          <Button mode="contained" onPress={handleApprove} style={styles.button}>
+          <Button
+            mode="contained"
+            onPress={handleApprove}
+            style={styles.button}>
             Approve
           </Button>
         </View>

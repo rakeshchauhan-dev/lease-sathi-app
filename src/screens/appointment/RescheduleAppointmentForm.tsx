@@ -1,6 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
-import { Card, TextInput, Button, Paragraph, Checkbox } from 'react-native-paper';
+import React, {useState, useEffect} from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import {Card, TextInput, Button, Paragraph, Checkbox} from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
@@ -16,9 +24,17 @@ interface RescheduleAppointmentFormProps {
   setCurrentForm: (form: string) => void;
 }
 
-const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({ appointmentID, tokenID, setCurrentForm }) => {
-  const [appointmentDate, setAppointmentDate] = useState<Date | undefined>(undefined);
-  const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(undefined);
+const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({
+  appointmentID,
+  tokenID,
+  setCurrentForm,
+}) => {
+  const [appointmentDate, setAppointmentDate] = useState<Date | undefined>(
+    undefined,
+  );
+  const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(
+    undefined,
+  );
   const [employeeId, setEmployeeId] = useState('');
   const [employeeName, setEmployeeName] = useState('');
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -32,7 +48,9 @@ const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({ a
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axiosInstance.get(`${config.EMPLOYEES_URL}/visitors`);
+        const response = await axiosInstance.get(
+          `${config.EMPLOYEES_URL}/visitors`,
+        );
         setEmployees(response.data);
       } catch (error) {
         console.error('Error fetching employees:', error);
@@ -45,8 +63,8 @@ const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({ a
   const handleEmployeeSearch = (name: string) => {
     setEmployeeName(name);
     if (name.length >= 2) {
-      const filtered = employees.filter((employee) =>
-        employee.name.toLowerCase().includes(name.toLowerCase())
+      const filtered = employees.filter(employee =>
+        employee.name.toLowerCase().includes(name.toLowerCase()),
       );
       setFilteredEmployees(filtered);
       setEmployeeListVisible(true);
@@ -79,17 +97,16 @@ const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({ a
       return;
     }
 
-        // Format the date as an ISO 8601 string (YYYY-MM-DDTHH:MM:SSZ)
-    const formattedAppointmentDate = appointmentDate.toISOString(); 
+    // Format the date as an ISO 8601 string (YYYY-MM-DDTHH:MM:SSZ)
+    const formattedAppointmentDate = appointmentDate.toISOString();
 
     // Format the time as HH:MM in 24-hour format
-    const formattedAppointmentTime = appointmentTime.toLocaleTimeString([], { 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      hour12: false 
+    const formattedAppointmentTime = appointmentTime.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
     });
 
-  
     const rescheduledAppointment = {
       appointment_id: appointmentID, // Use the passed appointment ID
       token_id: tokenID, // Use the passed token ID
@@ -97,10 +114,12 @@ const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({ a
       new_time: formattedAppointmentTime,
       new_employee_id: employeeId,
     };
-    
-  
+
     try {
-      const response = await axiosInstance.post(`${config.APPOINTMENTS_URL}/reschedule`, rescheduledAppointment);
+      const response = await axiosInstance.post(
+        `${config.APPOINTMENTS_URL}/reschedule`,
+        rescheduledAppointment,
+      );
       if (response.status === 200) {
         Alert.alert('Success', 'Appointment rescheduled successfully!');
         setCurrentForm(''); // Navigate back or clear the form
@@ -109,10 +128,12 @@ const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({ a
       }
     } catch (error) {
       console.error('Error rescheduling appointment:', error);
-      Alert.alert('Error', 'Failed to reschedule appointment. Please try again.');
+      Alert.alert(
+        'Error',
+        'Failed to reschedule appointment. Please try again.',
+      );
     }
   };
-  
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -121,7 +142,10 @@ const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({ a
           <Paragraph style={styles.subtitle}>Reschedule Appointment</Paragraph>
 
           {/* Reschedule appointment date and time */}
-          <Button onPress={() => setDatePickerVisibility(true)} mode="outlined" style={styles.inputCompact}>
+          <Button
+            onPress={() => setDatePickerVisibility(true)}
+            mode="outlined"
+            style={styles.inputCompact}>
             Select Appointment Date
           </Button>
           <TextInput
@@ -131,12 +155,22 @@ const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({ a
             mode="outlined"
             style={styles.inputCompact}
           />
-          <Button onPress={() => setTimePickerVisibility(true)} mode="outlined" style={styles.inputCompact}>
+          <Button
+            onPress={() => setTimePickerVisibility(true)}
+            mode="outlined"
+            style={styles.inputCompact}>
             Select Appointment Time
           </Button>
           <TextInput
             label="Appointment Time"
-            value={appointmentTime ? appointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+            value={
+              appointmentTime
+                ? appointmentTime.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : ''
+            }
             editable={false}
             mode="outlined"
             style={styles.inputCompact}
@@ -154,8 +188,8 @@ const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({ a
           {isEmployeeListVisible && (
             <FlatList
               data={filteredEmployees}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
+              keyExtractor={item => item.id}
+              renderItem={({item}) => (
                 <TouchableOpacity onPress={() => handleSelectEmployee(item)}>
                   <Text style={styles.suggestionItem}>{item.name}</Text>
                 </TouchableOpacity>
@@ -168,8 +202,7 @@ const RescheduleAppointmentForm: React.FC<RescheduleAppointmentFormProps> = ({ a
             mode="contained"
             onPress={handleSubmit}
             style={styles.buttonCompact}
-            contentStyle={styles.buttonContentCompact}
-          >
+            contentStyle={styles.buttonContentCompact}>
             Reschedule Appointment
           </Button>
         </Card.Content>

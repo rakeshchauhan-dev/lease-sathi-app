@@ -1,6 +1,13 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Card, TextInput, Button, Title, Paragraph, Checkbox } from 'react-native-paper';
+import React, {useState} from 'react';
+import {View, StyleSheet, ScrollView} from 'react-native';
+import {
+  Card,
+  TextInput,
+  Button,
+  Title,
+  Paragraph,
+  Checkbox,
+} from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const NewCustomerPage = () => {
@@ -10,15 +17,28 @@ const NewCustomerPage = () => {
   const [email, setEmail] = useState('');
 
   const [appointmentEnabled, setAppointmentEnabled] = useState(false);
-  const [appointmentDate, setAppointmentDate] = useState<Date | undefined>(undefined);
-  const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(undefined);
+  const [appointmentDate, setAppointmentDate] = useState<Date | undefined>(
+    undefined,
+  );
+  const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(
+    undefined,
+  );
   const [employeeId, setEmployeeId] = useState('');
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
   const handleSubmit = () => {
-    const newCustomer = { name, mobile, address, email, appointmentEnabled, appointmentDate, appointmentTime, employeeId };
+    const newCustomer = {
+      name,
+      mobile,
+      address,
+      email,
+      appointmentEnabled,
+      appointmentDate,
+      appointmentTime,
+      employeeId,
+    };
     console.log('New Customer:', newCustomer);
     // Add your submit logic here, e.g., sending data to a backend or updating state
   };
@@ -38,7 +58,9 @@ const NewCustomerPage = () => {
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.title}>Add New Customer</Title>
-          <Paragraph style={styles.subtitle}>Please fill in the details below:</Paragraph>
+          <Paragraph style={styles.subtitle}>
+            Please fill in the details below:
+          </Paragraph>
           <TextInput
             label="Name"
             value={name}
@@ -86,7 +108,10 @@ const NewCustomerPage = () => {
 
           {appointmentEnabled && (
             <>
-              <Button onPress={() => setDatePickerVisibility(true)} mode="outlined" style={styles.input}>
+              <Button
+                onPress={() => setDatePickerVisibility(true)}
+                mode="outlined"
+                style={styles.input}>
                 Select Appointment Date
               </Button>
               <TextInput
@@ -96,12 +121,22 @@ const NewCustomerPage = () => {
                 mode="outlined"
                 style={styles.input}
               />
-              <Button onPress={() => setTimePickerVisibility(true)} mode="outlined" style={styles.input}>
+              <Button
+                onPress={() => setTimePickerVisibility(true)}
+                mode="outlined"
+                style={styles.input}>
                 Select Appointment Time
               </Button>
               <TextInput
                 label="Appointment Time"
-                value={appointmentTime ? appointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                value={
+                  appointmentTime
+                    ? appointmentTime.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                    : ''
+                }
                 editable={false}
                 mode="outlined"
                 style={styles.input}
@@ -121,8 +156,7 @@ const NewCustomerPage = () => {
             mode="contained"
             onPress={handleSubmit}
             style={styles.button}
-            contentStyle={styles.buttonContent}
-          >
+            contentStyle={styles.buttonContent}>
             Add Customer
           </Button>
         </Card.Content>

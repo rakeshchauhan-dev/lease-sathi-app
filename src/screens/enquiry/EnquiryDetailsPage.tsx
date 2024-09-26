@@ -1,7 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, Alert, View, ActivityIndicator, StyleSheet } from 'react-native';
-import { Button, Card, Paragraph, Title } from 'react-native-paper';
-import { useRoute, useNavigation } from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
+import {
+  ScrollView,
+  Text,
+  Alert,
+  View,
+  ActivityIndicator,
+  StyleSheet,
+} from 'react-native';
+import {Button, Card, Paragraph, Title} from 'react-native-paper';
+import {useRoute, useNavigation} from '@react-navigation/native';
 import DocumentPicker from 'react-native-document-picker'; // Import Document Picker
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
@@ -28,7 +35,7 @@ interface Enquiry {
 
 const EnquiryDetailsPage = () => {
   const route = useRoute();
-  const { id } = route.params as { id: number };
+  const {id} = route.params as {id: number};
   const navigation = useNavigation<any>();
 
   const [enquiry, setEnquiry] = useState<Enquiry | null>(null);
@@ -38,7 +45,9 @@ const EnquiryDetailsPage = () => {
   useEffect(() => {
     const fetchEnquiryDetails = async () => {
       try {
-        const response = await axiosInstance.get(`${config.ENQUIRIES_URL}/${id}`);
+        const response = await axiosInstance.get(
+          `${config.ENQUIRIES_URL}/${id}`,
+        );
         setEnquiry(response.data);
       } catch (error) {
         console.error('Error fetching enquiry details:', error);
@@ -79,16 +88,23 @@ const EnquiryDetailsPage = () => {
     }
 
     try {
-      await axiosInstance.post(`${config.ENQUIRIES_URL}/${id}/customers`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      await axiosInstance.post(
+        `${config.ENQUIRIES_URL}/${id}/customers`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
       Alert.alert('Success', 'Enquiry converted to customer successfully!');
       navigation.navigate('EnquiryDashboard');
     } catch (error) {
       console.error('Error converting enquiry to customer:', error);
-      Alert.alert('Error', 'Failed to convert enquiry to customer. Please try again.');
+      Alert.alert(
+        'Error',
+        'Failed to convert enquiry to customer. Please try again.',
+      );
     }
   };
 
@@ -119,8 +135,12 @@ const EnquiryDetailsPage = () => {
           <Paragraph>Tenure: {enquiry.tenure}</Paragraph>
           <Paragraph>Rent: {enquiry.rent}</Paragraph>
           <Paragraph>Deposit: {enquiry.deposit}</Paragraph>
-          {enquiry.increment && <Paragraph>Increment: {enquiry.increment}</Paragraph>}
-          {enquiry.extraService && <Paragraph>Extra Service: {enquiry.extraService}</Paragraph>}
+          {enquiry.increment && (
+            <Paragraph>Increment: {enquiry.increment}</Paragraph>
+          )}
+          {enquiry.extraService && (
+            <Paragraph>Extra Service: {enquiry.extraService}</Paragraph>
+          )}
           {enquiry.quoted && <Paragraph>Quoted: {enquiry.quoted}</Paragraph>}
         </Card.Content>
       </Card>
@@ -128,14 +148,20 @@ const EnquiryDetailsPage = () => {
       <Card style={styles.card}>
         <Card.Content>
           <Title>Convert Enquiry to Customer</Title>
-          <Paragraph>Would you like to convert this enquiry into a customer by scheduling an appointment?</Paragraph>
+          <Paragraph>
+            Would you like to convert this enquiry into a customer by scheduling
+            an appointment?
+          </Paragraph>
         </Card.Content>
-        
+
         <Button mode="outlined" onPress={handleFilePick} style={styles.button}>
           {file ? `Selected File: ${file.name}` : 'Attach File'}
         </Button>
 
-        <Button mode="contained" onPress={handleConvertToCustomer} style={styles.button}>
+        <Button
+          mode="contained"
+          onPress={handleConvertToCustomer}
+          style={styles.button}>
           Convert to Customer
         </Button>
       </Card>

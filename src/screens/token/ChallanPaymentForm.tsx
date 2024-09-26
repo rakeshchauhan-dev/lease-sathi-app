@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, TextInput, View, Text, Alert } from 'react-native';
-import { Card, Title, Button, Paragraph, RadioButton } from 'react-native-paper';
+import React, {useState} from 'react';
+import {StyleSheet, TextInput, View, Text, Alert} from 'react-native';
+import {Card, Title, Button, Paragraph, RadioButton} from 'react-native-paper';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 
@@ -112,7 +112,10 @@ const ChallanPaymentForm: React.FC<ChallanPaymentFormProps> = ({
         </View>
 
         {/* Submit Button */}
-        <Button mode="contained" onPress={handleSubmitPayment} style={styles.button}>
+        <Button
+          mode="contained"
+          onPress={handleSubmitPayment}
+          style={styles.button}>
           Submit Payment
         </Button>
       </Card.Content>

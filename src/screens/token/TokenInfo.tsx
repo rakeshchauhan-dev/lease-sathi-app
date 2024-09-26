@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Card, Paragraph, Title } from 'react-native-paper';
+import {StyleSheet, View} from 'react-native';
+import {Card, Paragraph, Title} from 'react-native-paper';
 
 interface TokenInfoProps {
   token: {
@@ -11,7 +11,7 @@ interface TokenInfoProps {
   };
 }
 
-const TokenInfo: React.FC<TokenInfoProps> = ({ token }) => {
+const TokenInfo: React.FC<TokenInfoProps> = ({token}) => {
   return (
     <Card style={styles.card}>
       <Card.Content>

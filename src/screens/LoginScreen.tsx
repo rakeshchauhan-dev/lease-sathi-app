@@ -1,11 +1,20 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from '../config'; // Adjust the path as necessary
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
-const LoginScreen = ({  }) => {
+const LoginScreen = ({}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,22 +26,22 @@ const LoginScreen = ({  }) => {
       Alert.alert('Validation Error', 'Please enter both email and password.');
       return;
     }
-  
+
     setLoading(true);
     try {
       console.log('Attempting login with Email:', email);
-  
+
       const response = await axios.post(config.LOGIN_URL, {
         email,
         password,
       });
-  
+
       console.log('API Response:', response.data);
-  
+
       if (response.data && response.data.token) {
-        const { token } = response.data;
+        const {token} = response.data;
         await AsyncStorage.setItem('authToken', token);
-  
+
         // Navigate to the main app
         console.log('Login successful, navigating to DashboardMain');
         navigation.replace('DashboardMain'); // Make sure this matches the screen name
@@ -41,12 +50,15 @@ const LoginScreen = ({  }) => {
       }
     } catch (error) {
       console.error('Error during login:', error);
-      Alert.alert('Login Failed', 'An error occurred during login. Please check your network and try again.');
+      Alert.alert(
+        'Login Failed',
+        'An error occurred during login. Please check your network and try again.',
+      );
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
@@ -68,8 +80,7 @@ const LoginScreen = ({  }) => {
         />
         <TouchableOpacity
           style={styles.togglePassword}
-          onPress={() => setShowPassword(!showPassword)}
-        >
+          onPress={() => setShowPassword(!showPassword)}>
           <Text>{showPassword ? 'Hide' : 'Show'}</Text>
         </TouchableOpacity>
       </View>

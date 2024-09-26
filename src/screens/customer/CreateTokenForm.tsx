@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Alert } from 'react-native';
-import { Card, Title, Button } from 'react-native-paper';
-import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
+import React, {useState} from 'react';
+import {StyleSheet, View, TextInput, Alert} from 'react-native';
+import {Card, Title, Button} from 'react-native-paper';
+import DocumentPicker, {
+  DocumentPickerResponse,
+} from 'react-native-document-picker';
 import axiosInstance from '../../axiosInstance';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import {useNavigation} from '@react-navigation/native'; // Import useNavigation
 import config from '../../config';
 
 interface CreateTokenFormProps {
   customerID: number;
 }
 
-const CreateTokenForm: React.FC<CreateTokenFormProps> = ({ customerID }) => {
+const CreateTokenForm: React.FC<CreateTokenFormProps> = ({customerID}) => {
   const [tokenNo, setTokenNo] = useState('');
   const [password, setPassword] = useState('');
   const navigation = useNavigation<any>(); // Typed useNavigation
@@ -40,21 +42,27 @@ const CreateTokenForm: React.FC<CreateTokenFormProps> = ({ customerID }) => {
     });
 
     try {
-      const response = await axiosInstance.post(`${config.TOKENS_URL}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const response = await axiosInstance.post(
+        `${config.TOKENS_URL}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
 
       if (response.status === 200) {
         Alert.alert('Success', 'Token created successfully!');
-        navigation.navigate('CustomerDashboard');  // Assuming your dashboard route is named 'Dashboard'
-
+        navigation.navigate('CustomerDashboard'); // Assuming your dashboard route is named 'Dashboard'
       }
     } catch (error: any) {
       if (error.response) {
         console.error('Error response:', error.response);
-        Alert.alert('Error', error.response.data.message || 'Failed to create token');
+        Alert.alert(
+          'Error',
+          error.response.data.message || 'Failed to create token',
+        );
       } else if (error.request) {
         console.error('No response from server:', error.request);
         Alert.alert('Error', 'No response from server');
@@ -98,11 +106,7 @@ const CreateTokenForm: React.FC<CreateTokenFormProps> = ({ customerID }) => {
           secureTextEntry
         />
 
-        <Button
-          mode="outlined"
-          onPress={handleFilePick}
-          style={styles.button}
-        >
+        <Button mode="outlined" onPress={handleFilePick} style={styles.button}>
           {file ? `Selected File: ${file.name}` : 'Upload File'}
         </Button>
 
@@ -110,8 +114,7 @@ const CreateTokenForm: React.FC<CreateTokenFormProps> = ({ customerID }) => {
           <Button
             mode="contained"
             onPress={handleCreateToken}
-            style={styles.button}
-          >
+            style={styles.button}>
             Create Token
           </Button>
         </View>

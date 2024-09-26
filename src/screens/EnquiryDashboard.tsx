@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
-import { Divider, FAB } from 'react-native-paper';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, TextInput} from 'react-native';
+import {Divider, FAB} from 'react-native-paper';
 import EnquiryList from '../components/EnquiryList';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 
 const EnquiryDashboard = () => {
   const [searchText, setSearchText] = useState('');

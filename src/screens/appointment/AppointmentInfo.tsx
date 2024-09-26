@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import { Card, Paragraph, Title } from 'react-native-paper';
+import {StyleSheet, View} from 'react-native';
+import {Card, Paragraph, Title} from 'react-native-paper';
 
 interface AppointmentInfoProps {
   appointment: {
@@ -12,18 +12,22 @@ interface AppointmentInfoProps {
   };
 }
 
-const AppointmentInfo: React.FC<AppointmentInfoProps> = ({ appointment }) => {
+const AppointmentInfo: React.FC<AppointmentInfoProps> = ({appointment}) => {
   return (
     <Card style={styles.card}>
       <Card.Content>
         <Title style={styles.title}>Appointment Information</Title>
         <View style={styles.infoContainer}>
           <Paragraph style={styles.label}>Customer Name:</Paragraph>
-          <Paragraph style={styles.value}>{appointment.customer_name}</Paragraph>
+          <Paragraph style={styles.value}>
+            {appointment.customer_name}
+          </Paragraph>
         </View>
         <View style={styles.infoContainer}>
           <Paragraph style={styles.label}>Appointment Address:</Paragraph>
-          <Paragraph style={styles.value}>{appointment.appointment_address}</Paragraph>
+          <Paragraph style={styles.value}>
+            {appointment.appointment_address}
+          </Paragraph>
         </View>
         <View style={styles.infoContainer}>
           <Paragraph style={styles.label}>Role:</Paragraph>
@@ -49,7 +53,7 @@ const AppointmentInfo: React.FC<AppointmentInfoProps> = ({ appointment }) => {
 const styles = StyleSheet.create({
   card: {
     marginVertical: 10,
-    marginHorizontal: 10, 
+    marginHorizontal: 10,
     padding: 10,
     backgroundColor: '#ffffff',
     borderRadius: 6,

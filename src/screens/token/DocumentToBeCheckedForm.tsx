@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, Alert } from 'react-native';
-import { Card, Title, Button } from 'react-native-paper';
+import {StyleSheet, Text, Alert} from 'react-native';
+import {Card, Title, Button} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import {useNavigation} from '@react-navigation/native'; // Import useNavigation
 
 interface DocumentToBeCheckedFormProps {
   checkedFile: any;
@@ -19,7 +19,7 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
   tokenID,
   setCurrentForm, // Destructure setCurrentForm
 }) => {
-const navigation = useNavigation<any>(); // Typed useNavigation
+  const navigation = useNavigation<any>(); // Typed useNavigation
 
   const handleDocumentPick = async () => {
     try {
@@ -52,17 +52,21 @@ const navigation = useNavigation<any>(); // Typed useNavigation
     });
 
     try {
-      const response = await axiosInstance.post(`${config.TOKENS_URL}/upload-file`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const response = await axiosInstance.post(
+        `${config.TOKENS_URL}/upload-file`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
 
       if (response.status === 200) {
         Alert.alert('Document uploaded successfully');
-        
+
         // Navigate to the main dashboard
-        navigation.navigate('DashboardMain');  // Assuming your dashboard route is named 'Dashboard'
+        navigation.navigate('DashboardMain'); // Assuming your dashboard route is named 'Dashboard'
 
         console.log('Form switched to Completed');
       }
@@ -80,22 +84,16 @@ const navigation = useNavigation<any>(); // Typed useNavigation
         <Button
           mode="outlined"
           onPress={handleDocumentPick}
-          style={styles.uploadButton}
-        >
+          style={styles.uploadButton}>
           {checkedFile ? 'Change Checked Document' : 'Upload Checked Document'}
         </Button>
 
-        {checkedFile && (
-          <Text style={styles.fileName}>
-            {checkedFile.name}
-          </Text>
-        )}
+        {checkedFile && <Text style={styles.fileName}>{checkedFile.name}</Text>}
 
         <Button
           mode="contained"
           onPress={handleFileUpload}
-          style={styles.submitButton}
-        >
+          style={styles.submitButton}>
           Submit Checked Document
         </Button>
       </Card.Content>

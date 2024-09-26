@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
 
 // Request Interceptor
 axiosInstance.interceptors.request.use(
-  async (request) => {
+  async request => {
     // Retrieve the token from AsyncStorage
     const token = await AsyncStorage.getItem('authToken'); // Replace 'authToken' with your token's key
     if (token) {
@@ -19,22 +19,22 @@ axiosInstance.interceptors.request.use(
     console.log('Request:', request);
     return request;
   },
-  (error) => {
+  error => {
     console.error('Request error:', error);
     return Promise.reject(error);
-  }
+  },
 );
 
 // Response Interceptor
 axiosInstance.interceptors.response.use(
-  (response) => {
+  response => {
     console.log('Response:', response);
     return response;
   },
-  (error) => {
+  error => {
     console.error('Response error:', error);
     return Promise.reject(error);
-  }
+  },
 );
 
 export default axiosInstance;

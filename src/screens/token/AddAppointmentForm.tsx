@@ -1,7 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Card, TextInput, Button, Title, Paragraph, Checkbox, RadioButton } from 'react-native-paper';
+import React, {useState, useEffect} from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {
+  Card,
+  TextInput,
+  Button,
+  Title,
+  Paragraph,
+  Checkbox,
+  RadioButton,
+} from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
@@ -16,10 +32,17 @@ interface AddAppointmentFormProps {
   setCurrentForm: (form: string) => void;
 }
 
-const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCurrentForm }) => {
+const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({
+  tokenID,
+  setCurrentForm,
+}) => {
   const navigation = useNavigation<any>(); // Typed useNavigation
-  const [appointmentDate, setAppointmentDate] = useState<Date | undefined>(undefined);
-  const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(undefined);
+  const [appointmentDate, setAppointmentDate] = useState<Date | undefined>(
+    undefined,
+  );
+  const [appointmentTime, setAppointmentTime] = useState<Date | undefined>(
+    undefined,
+  );
   const [employeeId, setEmployeeId] = useState('');
   const [employeeName, setEmployeeName] = useState('');
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -28,27 +51,37 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
   const [address, setAddress] = useState('');
   const [useSameAddress, setUseSameAddress] = useState(true);
 
-
-  const [isAdditionalAppointmentVisible, setAdditionalAppointmentVisibility] = useState(false);
-  const [additionalAppointmentDate, setAdditionalAppointmentDate] = useState<Date | undefined>(undefined);
-  const [additionalAppointmentTime, setAdditionalAppointmentTime] = useState<Date | undefined>(undefined);
+  const [isAdditionalAppointmentVisible, setAdditionalAppointmentVisibility] =
+    useState(false);
+  const [additionalAppointmentDate, setAdditionalAppointmentDate] = useState<
+    Date | undefined
+  >(undefined);
+  const [additionalAppointmentTime, setAdditionalAppointmentTime] = useState<
+    Date | undefined
+  >(undefined);
   const [additionalEmployeeId, setAdditionalEmployeeId] = useState('');
   const [additionalEmployeeName, setAdditionalEmployeeName] = useState(''); // Additional employee name state
-  const [filteredAdditionalEmployees, setFilteredAdditionalEmployees] = useState<Employee[]>([]); // Filtered list for additional employees
-  const [isAdditionalEmployeeListVisible, setAdditionalEmployeeListVisible] = useState(false);
+  const [filteredAdditionalEmployees, setFilteredAdditionalEmployees] =
+    useState<Employee[]>([]); // Filtered list for additional employees
+  const [isAdditionalEmployeeListVisible, setAdditionalEmployeeListVisible] =
+    useState(false);
   const [additionalAddress, setAdditionalAddress] = useState('');
   const [selectedRole, setSelectedRole] = useState('Tenant');
 
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
-  const [isAdditionalDatePickerVisible, setAdditionalDatePickerVisibility] = useState(false);
-  const [isAdditionalTimePickerVisible, setAdditionalTimePickerVisibility] = useState(false);
+  const [isAdditionalDatePickerVisible, setAdditionalDatePickerVisibility] =
+    useState(false);
+  const [isAdditionalTimePickerVisible, setAdditionalTimePickerVisibility] =
+    useState(false);
 
   // Fetch employee data from the API
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axiosInstance.get(`${config.EMPLOYEES_URL}/visitors`);
+        const response = await axiosInstance.get(
+          `${config.EMPLOYEES_URL}/visitors`,
+        );
         setEmployees(response.data);
       } catch (error) {
         console.error('Error fetching employees:', error);
@@ -61,8 +94,8 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
   const handleEmployeeSearch = (name: string) => {
     setEmployeeName(name);
     if (name.length >= 2) {
-      const filtered = employees.filter((employee) =>
-        employee.name.toLowerCase().includes(name.toLowerCase())
+      const filtered = employees.filter(employee =>
+        employee.name.toLowerCase().includes(name.toLowerCase()),
       );
       setFilteredEmployees(filtered);
       setEmployeeListVisible(true);
@@ -71,27 +104,26 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
     }
   };
 
-    // Filter employee list based on the input for additional employee search
-    const handleAdditionalEmployeeSearch = (name: string) => {
-      setAdditionalEmployeeName(name);
-      if (name.length >= 2) {
-        const filtered = employees.filter((employee) =>
-          employee.name.toLowerCase().includes(name.toLowerCase())
-        );
-        setFilteredAdditionalEmployees(filtered);
-        setAdditionalEmployeeListVisible(true);
-      } else {
-        setAdditionalEmployeeListVisible(false);
-      }
-    };
-  
-    // Select additional employee
-    const handleSelectAdditionalEmployee = (employee: Employee) => {
-      setAdditionalEmployeeName(employee.name);
-      setAdditionalEmployeeId(employee.id);
-      setAdditionalEmployeeListVisible(false); // Hide the suggestions
-    };
-  
+  // Filter employee list based on the input for additional employee search
+  const handleAdditionalEmployeeSearch = (name: string) => {
+    setAdditionalEmployeeName(name);
+    if (name.length >= 2) {
+      const filtered = employees.filter(employee =>
+        employee.name.toLowerCase().includes(name.toLowerCase()),
+      );
+      setFilteredAdditionalEmployees(filtered);
+      setAdditionalEmployeeListVisible(true);
+    } else {
+      setAdditionalEmployeeListVisible(false);
+    }
+  };
+
+  // Select additional employee
+  const handleSelectAdditionalEmployee = (employee: Employee) => {
+    setAdditionalEmployeeName(employee.name);
+    setAdditionalEmployeeId(employee.id);
+    setAdditionalEmployeeListVisible(false); // Hide the suggestions
+  };
 
   // Select main employee
   const handleSelectEmployee = (employee: Employee) => {
@@ -125,27 +157,48 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
   const handleSubmit = async () => {
     const newAppointment = {
       token_id: tokenID, // Use the passed tokenID
-      appointment_date: appointmentDate ? appointmentDate.toISOString() : undefined, // ISO string with time
-      appointment_time: appointmentTime ? appointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) : undefined, // 24-hour time format
+      appointment_date: appointmentDate
+        ? appointmentDate.toISOString()
+        : undefined, // ISO string with time
+      appointment_time: appointmentTime
+        ? appointmentTime.toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          })
+        : undefined, // 24-hour time format
       employee_id: employeeId,
       use_same_address: useSameAddress,
       address: useSameAddress ? address : additionalAddress,
       role: selectedRole,
       is_additional_appointment_visible: isAdditionalAppointmentVisible,
-      additional_appointment_date: isAdditionalAppointmentVisible && additionalAppointmentDate
-      ? additionalAppointmentDate.toISOString() // ISO string for additional appointment date
-      : undefined,
-      additional_appointment_time: isAdditionalAppointmentVisible && additionalAppointmentTime
-      ? additionalAppointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }) // 24-hour time format for additional appointment
-      : undefined,
-      additional_employee_id: isAdditionalAppointmentVisible ? additionalEmployeeId : undefined,
-      additional_address: isAdditionalAppointmentVisible ? additionalAddress : undefined,
+      additional_appointment_date:
+        isAdditionalAppointmentVisible && additionalAppointmentDate
+          ? additionalAppointmentDate.toISOString() // ISO string for additional appointment date
+          : undefined,
+      additional_appointment_time:
+        isAdditionalAppointmentVisible && additionalAppointmentTime
+          ? additionalAppointmentTime.toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            }) // 24-hour time format for additional appointment
+          : undefined,
+      additional_employee_id: isAdditionalAppointmentVisible
+        ? additionalEmployeeId
+        : undefined,
+      additional_address: isAdditionalAppointmentVisible
+        ? additionalAddress
+        : undefined,
     };
-  
+
     console.log('Appointment Request Body:', newAppointment);
     // Add your submit logic here, e.g., sending data to a backend or updating state
     try {
-      const response = await axiosInstance.post(`${config.APPOINTMENTS_URL}`, newAppointment);
+      const response = await axiosInstance.post(
+        `${config.APPOINTMENTS_URL}`,
+        newAppointment,
+      );
       // Assuming success if status is 200
       if (response.status === 200) {
         Alert.alert('Success', 'Appointment saved successfully!');
@@ -164,10 +217,15 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
       <Card style={styles.card}>
         <Card.Content>
           <Title style={styles.title}>Add Appointment</Title>
-          <Paragraph style={styles.subtitle}>Please fill in the details below:</Paragraph>
+          <Paragraph style={styles.subtitle}>
+            Please fill in the details below:
+          </Paragraph>
 
           {/* Normal appointment date and time */}
-          <Button onPress={() => setDatePickerVisibility(true)} mode="outlined" style={styles.inputCompact}>
+          <Button
+            onPress={() => setDatePickerVisibility(true)}
+            mode="outlined"
+            style={styles.inputCompact}>
             Select Appointment Date
           </Button>
           <TextInput
@@ -177,12 +235,22 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
             mode="outlined"
             style={styles.inputCompact}
           />
-          <Button onPress={() => setTimePickerVisibility(true)} mode="outlined" style={styles.inputCompact}>
+          <Button
+            onPress={() => setTimePickerVisibility(true)}
+            mode="outlined"
+            style={styles.inputCompact}>
             Select Appointment Time
           </Button>
           <TextInput
             label="Appointment Time"
-            value={appointmentTime ? appointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+            value={
+              appointmentTime
+                ? appointmentTime.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : ''
+            }
             editable={false}
             mode="outlined"
             style={styles.inputCompact}
@@ -200,8 +268,8 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
           {isEmployeeListVisible && (
             <FlatList
               data={filteredEmployees}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
+              keyExtractor={item => item.id}
+              renderItem={({item}) => (
                 <TouchableOpacity onPress={() => handleSelectEmployee(item)}>
                   <Text style={styles.suggestionItem}>{item.name}</Text>
                 </TouchableOpacity>
@@ -232,12 +300,18 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
           <Checkbox.Item
             label="Add Additional Appointment"
             status={isAdditionalAppointmentVisible ? 'checked' : 'unchecked'}
-            onPress={() => setAdditionalAppointmentVisibility(!isAdditionalAppointmentVisible)}
+            onPress={() =>
+              setAdditionalAppointmentVisibility(
+                !isAdditionalAppointmentVisible,
+              )
+            }
           />
 
           {isAdditionalAppointmentVisible && (
             <>
-              <Paragraph style={styles.sectionTitle}>Additional Appointment Details</Paragraph>
+              <Paragraph style={styles.sectionTitle}>
+                Additional Appointment Details
+              </Paragraph>
 
               <View style={styles.radioGroup}>
                 <Text>Select Role:</Text>
@@ -258,22 +332,39 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
               </View>
 
               {/* Additional appointment date and time */}
-              <Button onPress={() => setAdditionalDatePickerVisibility(true)} mode="outlined" style={styles.inputCompact}>
+              <Button
+                onPress={() => setAdditionalDatePickerVisibility(true)}
+                mode="outlined"
+                style={styles.inputCompact}>
                 Select Additional Appointment Date
               </Button>
               <TextInput
                 label="Additional Appointment Date"
-                value={additionalAppointmentDate ? additionalAppointmentDate.toDateString() : ''}
+                value={
+                  additionalAppointmentDate
+                    ? additionalAppointmentDate.toDateString()
+                    : ''
+                }
                 editable={false}
                 mode="outlined"
                 style={styles.inputCompact}
               />
-              <Button onPress={() => setAdditionalTimePickerVisibility(true)} mode="outlined" style={styles.inputCompact}>
+              <Button
+                onPress={() => setAdditionalTimePickerVisibility(true)}
+                mode="outlined"
+                style={styles.inputCompact}>
                 Select Additional Appointment Time
               </Button>
               <TextInput
                 label="Additional Appointment Time"
-                value={additionalAppointmentTime ? additionalAppointmentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                value={
+                  additionalAppointmentTime
+                    ? additionalAppointmentTime.toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })
+                    : ''
+                }
                 editable={false}
                 mode="outlined"
                 style={styles.inputCompact}
@@ -291,9 +382,10 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
               {isAdditionalEmployeeListVisible && (
                 <FlatList
                   data={filteredAdditionalEmployees}
-                  keyExtractor={(item) => item.id}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity onPress={() => handleSelectAdditionalEmployee(item)}>
+                  keyExtractor={item => item.id}
+                  renderItem={({item}) => (
+                    <TouchableOpacity
+                      onPress={() => handleSelectAdditionalEmployee(item)}>
                       <Text style={styles.suggestionItem}>{item.name}</Text>
                     </TouchableOpacity>
                   )}
@@ -316,8 +408,7 @@ const AddAppointmentForm: React.FC<AddAppointmentFormProps> = ({ tokenID, setCur
             mode="contained"
             onPress={handleSubmit}
             style={styles.buttonCompact}
-            contentStyle={styles.buttonContentCompact}
-          >
+            contentStyle={styles.buttonContentCompact}>
             Save Appointment
           </Button>
         </Card.Content>

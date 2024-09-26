@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
-import { Card, Title, Button } from 'react-native-paper';
+import {StyleSheet, View, Alert} from 'react-native';
+import {Card, Title, Button} from 'react-native-paper';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 
@@ -15,9 +15,12 @@ const DocToBeSubmittedForm: React.FC<DocToBeSubmittedFormProps> = ({
 }) => {
   const handleApprove = async () => {
     try {
-      const response = await axiosInstance.put(`${config.TOKENS_URL}/${tokenID}`, {
-        status: 'Doc to be checked', // Assuming status is updated to 'Doc to be checked'
-      });
+      const response = await axiosInstance.put(
+        `${config.TOKENS_URL}/${tokenID}`,
+        {
+          status: 'Doc to be checked', // Assuming status is updated to 'Doc to be checked'
+        },
+      );
 
       if (response.status === 200) {
         Alert.alert('Document marked as submitted to government');
@@ -32,9 +35,14 @@ const DocToBeSubmittedForm: React.FC<DocToBeSubmittedFormProps> = ({
   return (
     <Card style={styles.card}>
       <Card.Content>
-        <Title style={styles.title}>Document has been submitted to the government</Title>
+        <Title style={styles.title}>
+          Document has been submitted to the government
+        </Title>
         <View style={styles.buttonContainer}>
-          <Button mode="contained" onPress={handleApprove} style={styles.button}>
+          <Button
+            mode="contained"
+            onPress={handleApprove}
+            style={styles.button}>
             Approve
           </Button>
         </View>

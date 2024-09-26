@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, Alert } from 'react-native';
-import { Card, Title, Button } from 'react-native-paper';
+import {StyleSheet, Text, Alert} from 'react-native';
+import {Card, Title, Button} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
@@ -49,11 +49,15 @@ const UploadRevisedDraftForm: React.FC<UploadRevisedDraftFormProps> = ({
     });
 
     try {
-      const response = await axiosInstance.post(`${config.TOKENS_URL}/upload-file`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const response = await axiosInstance.post(
+        `${config.TOKENS_URL}/upload-file`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
 
       if (response.status === 200) {
         Alert.alert('File uploaded successfully');
@@ -73,22 +77,16 @@ const UploadRevisedDraftForm: React.FC<UploadRevisedDraftFormProps> = ({
         <Button
           mode="outlined"
           onPress={handleDocumentPick}
-          style={styles.uploadButton}
-        >
+          style={styles.uploadButton}>
           {draftFile ? 'Change Revised Draft' : 'Upload Revised Draft'}
         </Button>
 
-        {draftFile && (
-          <Text style={styles.fileName}>
-            {draftFile.name}
-          </Text>
-        )}
+        {draftFile && <Text style={styles.fileName}>{draftFile.name}</Text>}
 
         <Button
           mode="contained"
           onPress={handleFileUpload}
-          style={styles.submitButton}
-        >
+          style={styles.submitButton}>
           Submit
         </Button>
       </Card.Content>

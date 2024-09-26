@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
-import { Divider } from 'react-native-paper';
+import React, {useState, useEffect} from 'react';
+import {View, StyleSheet, TextInput} from 'react-native';
+import {Divider} from 'react-native-paper';
 import CustomerList from '../components/CustomerList'; // Assuming you have this component
 
 const CustomerDashboard = () => {

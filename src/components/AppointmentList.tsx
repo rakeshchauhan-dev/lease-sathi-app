@@ -1,7 +1,13 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, StyleSheet, FlatList, Text, ActivityIndicator } from 'react-native';
-import { List, Divider } from 'react-native-paper';
-import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import React, {useEffect, useState, useCallback} from 'react';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
+import {List, Divider} from 'react-native-paper';
+import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import axiosInstance from '../axiosInstance';
 import config from '../config';
 
@@ -26,10 +32,10 @@ interface Meta {
 }
 
 interface AppointmentListProps {
-  searchText: string;  // Prop from parent component
+  searchText: string; // Prop from parent component
 }
 
-const AppointmentList: React.FC<AppointmentListProps> = ({ searchText }) => {
+const AppointmentList: React.FC<AppointmentListProps> = ({searchText}) => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState<Meta | null>(null); // Initialize meta as null
@@ -43,13 +49,15 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ searchText }) => {
     setError(null);
     try {
       const response = await axiosInstance.get(`${config.APPOINTMENTS_URL}`, {
-        params: { page: pageNum, limit: 10, searchText }, // Using searchText
+        params: {page: pageNum, limit: 10, searchText}, // Using searchText
       });
 
       const data = response.data;
 
       if (data.appointments && data.appointments.length > 0) {
-        setAppointments(prev => (pageNum === 1 ? data.appointments : [...prev, ...data.appointments]));
+        setAppointments(prev =>
+          pageNum === 1 ? data.appointments : [...prev, ...data.appointments],
+        );
         setMeta(data.meta);
         setNoData(false);
       } else if (pageNum === 1) {
@@ -74,11 +82,13 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ searchText }) => {
       // Reset appointments and fetch first page when screen is focused
       setAppointments([]);
       fetchAppointments(1);
-    }, [searchText]) // Add dependencies if necessary, like searchText
+    }, [searchText]), // Add dependencies if necessary, like searchText
   );
 
   useEffect(() => {
-    if (page > 1) fetchAppointments(page);
+    if (page > 1) {
+      fetchAppointments(page);
+    }
   }, [page]);
 
   const handleLoadMore = () => {
@@ -88,7 +98,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ searchText }) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       {error && <Text style={styles.errorText}>{error}</Text>}
       {noData && page === 1 ? (
         <View style={styles.noDataView}>
@@ -98,24 +108,26 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ searchText }) => {
         <FlatList
           data={appointments}
           keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View key={item.id}>
               <List.Item
                 title={item.customer_name}
                 description={`Appointment Date: ${item.appointment_date}`}
-                onPress={() => navigation.navigate('AppointmentDetailsPage', { appointment_id: item.id })}
-                right={() => (
-                  <Text style={styles.role}>
-                    {item.role}
-                  </Text>
-                )}
+                onPress={() =>
+                  navigation.navigate('AppointmentDetailsPage', {
+                    appointment_id: item.id,
+                  })
+                }
+                right={() => <Text style={styles.role}>{item.role}</Text>}
               />
               <Divider />
             </View>
           )}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={loading ? <ActivityIndicator size="small" color="gray" /> : null}
+          ListFooterComponent={
+            loading ? <ActivityIndicator size="small" color="gray" /> : null
+          }
         />
       )}
     </View>

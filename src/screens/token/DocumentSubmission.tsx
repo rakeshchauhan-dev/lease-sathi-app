@@ -1,6 +1,6 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
-import { Card, Title, Button } from 'react-native-paper';
+import {Text, StyleSheet} from 'react-native';
+import {Card, Title, Button} from 'react-native-paper';
 
 interface DocumentSubmissionProps {
   draftFile: any;
@@ -8,12 +8,19 @@ interface DocumentSubmissionProps {
   handleSubmit: () => void;
 }
 
-const DocumentSubmission: React.FC<DocumentSubmissionProps> = ({ draftFile, handleDocumentPick, handleSubmit }) => {
+const DocumentSubmission: React.FC<DocumentSubmissionProps> = ({
+  draftFile,
+  handleDocumentPick,
+  handleSubmit,
+}) => {
   return (
     <Card style={styles.card}>
       <Card.Content>
         <Title style={styles.title}>Document Submission</Title>
-        <Button mode="outlined" onPress={handleDocumentPick} style={styles.uploadButton}>
+        <Button
+          mode="outlined"
+          onPress={handleDocumentPick}
+          style={styles.uploadButton}>
           {draftFile ? 'Change Document' : 'Upload Document'}
         </Button>
         {draftFile && <Text style={styles.fileName}>{draftFile.name}</Text>}

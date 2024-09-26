@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, Text } from 'react-native';
 import { Button, Card } from 'react-native-paper';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 import AppointmentInfo from './AppointmentInfo';

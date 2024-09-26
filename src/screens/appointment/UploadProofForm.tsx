@@ -1,9 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, Alert } from 'react-native';
-import { Card, Title, Button } from 'react-native-paper';
-import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
+import {StyleSheet, Text, Alert} from 'react-native';
+import {Card, Title, Button} from 'react-native-paper';
+import DocumentPicker, {
+  DocumentPickerResponse,
+} from 'react-native-document-picker';
 import axiosInstance from '../../axiosInstance';
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import config from '../../config';
 
 interface UploadProofFormProps {
@@ -17,7 +19,8 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
   appointmentID,
   setCurrentForm,
 }) => {
-  const [proofFile, setProofFile] = React.useState<DocumentPickerResponse | null>(null);
+  const [proofFile, setProofFile] =
+    React.useState<DocumentPickerResponse | null>(null);
   const navigation = useNavigation<any>();
 
   const handleDocumentPick = async () => {
@@ -52,11 +55,15 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
     });
 
     try {
-      const response = await axiosInstance.post(`${config.APPOINTMENTS_URL}/upload-file`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      const response = await axiosInstance.post(
+        `${config.APPOINTMENTS_URL}/upload-file`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
         },
-      });
+      );
 
       if (response.status === 200) {
         Alert.alert('Proof uploaded successfully!');
@@ -73,28 +80,24 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
   return (
     <Card style={styles.card}>
       <Card.Content>
-        <Title style={styles.title}>Upload Proof of Appointment Completion</Title>
+        <Title style={styles.title}>
+          Upload Proof of Appointment Completion
+        </Title>
 
         <Button
           mode="outlined"
           onPress={handleDocumentPick}
-          style={styles.uploadButton}
-        >
+          style={styles.uploadButton}>
           {proofFile ? 'Change Proof Image' : 'Upload Proof Image'}
         </Button>
 
-        {proofFile && (
-          <Text style={styles.fileName}>
-            {proofFile.name}
-          </Text>
-        )}
+        {proofFile && <Text style={styles.fileName}>{proofFile.name}</Text>}
 
         {proofFile && (
           <Button
             mode="contained"
             onPress={handleFileUpload}
-            style={styles.submitButton}
-          >
+            style={styles.submitButton}>
             Submit Proof
           </Button>
         )}
