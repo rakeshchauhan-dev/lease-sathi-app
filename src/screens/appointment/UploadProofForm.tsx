@@ -1,5 +1,5 @@
-import React from 'react';
-import {StyleSheet, Text, Alert} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, Text, Alert, ActivityIndicator, View} from 'react-native';
 import {Card, Title, Button} from 'react-native-paper';
 import DocumentPicker, {
   DocumentPickerResponse,
@@ -17,41 +17,49 @@ interface UploadProofFormProps {
 const UploadProofForm: React.FC<UploadProofFormProps> = ({
   tokenID,
   appointmentID,
-  setCurrentForm,
 }) => {
-  const [proofFile, setProofFile] =
-    React.useState<DocumentPickerResponse | null>(null);
+  // Store an array of files
+  const [proofFiles, setProofFiles] = useState<DocumentPickerResponse[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const navigation = useNavigation<any>();
 
+  // Handle multi-file selection
   const handleDocumentPick = async () => {
     try {
-      const result = await DocumentPicker.pick({
+      const results = await DocumentPicker.pick({
         type: [DocumentPicker.types.images, DocumentPicker.types.allFiles],
+        allowMultiSelection: true, // Allow multiple selection
       });
-      setProofFile(result[0]);
+      setProofFiles(results); // Set the selected files in state
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User cancelled the picker');
       } else {
-        console.error('Error selecting document:', err);
+        console.error('Error selecting documents:', err);
       }
     }
   };
 
+  // Handle multi-file upload
   const handleFileUpload = async () => {
-    if (!proofFile) {
-      Alert.alert('No file selected');
+    if (proofFiles.length === 0) {
+      Alert.alert('No files selected');
       return;
     }
 
+    setIsSubmitting(true);
     const formData = new FormData();
     formData.append('tokenID', String(tokenID));
     formData.append('documentType', 'Appointment Completed');
     formData.append('appointmentID', String(appointmentID));
-    formData.append('files', {
-      uri: proofFile.uri,
-      type: proofFile.type,
-      name: proofFile.name,
+
+    // Loop through files and append them to the FormData
+    proofFiles.forEach(file => {
+      formData.append('files', {
+        uri: file.uri,
+        type: file.type,
+        name: file.name,
+      });
     });
 
     try {
@@ -74,6 +82,8 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
     } catch (error) {
       console.error('Error uploading proof:', error);
       Alert.alert('File upload failed');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -87,18 +97,32 @@ const UploadProofForm: React.FC<UploadProofFormProps> = ({
         <Button
           mode="outlined"
           onPress={handleDocumentPick}
-          style={styles.uploadButton}>
-          {proofFile ? 'Change Proof Image' : 'Upload Proof Image'}
+          style={styles.uploadButton}
+          disabled={isSubmitting}>
+          {proofFiles.length > 0 ? 'Change Proof Files' : 'Upload Proof Files'}
         </Button>
 
-        {proofFile && <Text style={styles.fileName}>{proofFile.name}</Text>}
+        {proofFiles.length > 0 && (
+          <View>
+            {proofFiles.map(file => (
+              <Text key={file.uri} style={styles.fileName}>
+                {file.name}
+              </Text>
+            ))}
+          </View>
+        )}
 
-        {proofFile && (
+        {proofFiles.length > 0 && (
           <Button
             mode="contained"
             onPress={handleFileUpload}
-            style={styles.submitButton}>
-            Submit Proof
+            style={styles.submitButton}
+            disabled={isSubmitting}>
+            {isSubmitting ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              'Submit Proof'
+            )}
           </Button>
         )}
       </Card.Content>

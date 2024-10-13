@@ -24,7 +24,7 @@ const ChallanPaymentForm: React.FC<ChallanPaymentFormProps> = ({
   const [amountReceived, setAmountReceived] = useState<string>('No'); // State for Amount Received
 
   const calculateTotal = () => {
-    const total = parseFloat(amount) + (parseFloat(governmentFee) || 0); // Ensure 0 is used if governmentFee is empty
+    const total = parseFloat(amount) - (parseFloat(governmentFee) || 0); // Ensure 0 is used if governmentFee is empty
     return isNaN(total) ? '0.00' : total.toFixed(2);
   };
 

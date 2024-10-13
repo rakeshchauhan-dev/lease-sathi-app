@@ -1,4 +1,5 @@
-const API_URL = 'http://10.0.2.2:8080';
+// const API_URL = 'http://10.0.2.2:8080';
+const API_URL = 'http://34.93.58.28:8080';
 const PROTECTED_ROUTE = 'api';
 export default {
   LOGIN_URL: `${API_URL}/login`,

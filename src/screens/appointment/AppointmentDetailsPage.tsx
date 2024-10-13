@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, Text } from 'react-native';
-import { Button, Card } from 'react-native-paper';
-import { useRoute } from '@react-navigation/native';
+import React, {useState, useEffect} from 'react';
+import {ScrollView, Text, ActivityIndicator} from 'react-native';
+import {Button, Card} from 'react-native-paper';
+import {useRoute} from '@react-navigation/native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 import AppointmentInfo from './AppointmentInfo';
@@ -24,17 +24,24 @@ interface Appointment {
 
 const AppointmentDetailsPage = () => {
   const route = useRoute();
-  const { appointment_id } = route.params as { appointment_id: number };
+  const {appointment_id} = route.params as {appointment_id: number};
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [currentForm, setCurrentForm] = useState<string>('Appointment Details');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [hasError, setHasError] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchAppointmentDetails = async () => {
       try {
-        const response = await axiosInstance.get(`${config.APPOINTMENTS_URL}/${appointment_id}`);
+        const response = await axiosInstance.get(
+          `${config.APPOINTMENTS_URL}/${appointment_id}`,
+        );
         setAppointment(response.data);
+        setIsLoading(false);
       } catch (error) {
         console.error('Error fetching appointment details:', error);
+        setHasError(true);
+        setIsLoading(false);
       }
     };
 
@@ -63,22 +70,27 @@ const AppointmentDetailsPage = () => {
     );
   };
 
-  if (!appointment) {
-    return <Text>Loading...</Text>;
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#6200ee" />;
+  }
+
+  if (hasError) {
+    return (
+      <Text>Error loading appointment details. Please try again later.</Text>
+    );
   }
 
   return (
     <ScrollView>
-      <AppointmentInfo appointment={appointment} />
+      {appointment && <AppointmentInfo appointment={appointment} />}
       {renderFormByStatus()}
       {currentForm !== 'Reschedule Appointment' && (
-        <Card style={{ margin: 20 }}>
+        <Card style={{margin: 20}}>
           <Card.Content>
             <Button
               mode="outlined"
               onPress={() => setCurrentForm('Reschedule Appointment')}
-              style={{ marginTop: 10 }}
-            >
+              style={{marginTop: 10}}>
               Reschedule Appointment
             </Button>
           </Card.Content>
