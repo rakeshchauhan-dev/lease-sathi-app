@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, ActivityIndicator } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {ScrollView, Text, ActivityIndicator} from 'react-native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 import TokenInfo from './TokenInfo';
@@ -9,7 +9,7 @@ import UploadRevisedDraftForm from './UploadRevisedDraftForm';
 import AddAppointmentForm from './AddAppointmentForm';
 import DocToBeSubmittedForm from './DocToBeSubmittedForm';
 import DocumentToBeCheckedForm from './DocumentToBeCheckedForm';
-import { useRoute } from '@react-navigation/native'; // Import useRoute
+import {useRoute} from '@react-navigation/native'; // Import useRoute
 
 interface Token {
   token_id: number;
@@ -36,14 +36,14 @@ const TokenDetailsPage = () => {
   const [currentForm, setCurrentForm] = useState<string>(''); // State to track the current form
   const [amount, setAmount] = useState('');
   const [governmentFee, setGovernmentFee] = useState('');
-  const [checkedFile, setCheckedFile] = useState<DocumentFile | null>(null); // State for handling the checked document file
   const [draftFile, setDraftFile] = useState<DocumentFile | null>(null); // State for handling the draft document
 
   // New states for different document types
   const [challanFile, setChallanFile] = useState<DocumentFile | null>(null);
   const [mainDocFile, setMainDocFile] = useState<DocumentFile | null>(null);
   const [index2File, setIndex2File] = useState<DocumentFile | null>(null);
-  const [policeVerificationFile, setPoliceVerificationFile] = useState<DocumentFile | null>(null); // Optional
+  const [policeVerificationFile, setPoliceVerificationFile] =
+    useState<DocumentFile | null>(null); // Optional
 
   const [loading, setLoading] = useState(true); // Loading state
 

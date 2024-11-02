@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {StyleSheet, Text, Alert} from 'react-native';
 import {Card, Title, Button} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
@@ -38,10 +38,8 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
   setIndex2File,
   policeVerificationFile,
   setPoliceVerificationFile,
-  setCurrentForm,
 }) => {
   const navigation = useNavigation<any>(); // Typed useNavigation
-  const [draftFile, setDraftFile] = useState<DocumentFile | null>(null); // State for handling the draft document
 
   const handleDocumentPick = async (
     setFile: React.Dispatch<React.SetStateAction<DocumentFile | null>>,
@@ -56,7 +54,7 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
       const selectedFile: DocumentFile = {
         uri: result[0].uri,
         type: result[0].type || 'application/octet-stream', // Default type if null
-        name: result[0].name || 'Unnamed Document', // Default name if null
+        name: result[0].name || title, // Default name if null
       };
 
       setFile(selectedFile);
