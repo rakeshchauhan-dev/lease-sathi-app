@@ -108,7 +108,7 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
 
     try {
       const response = await axiosInstance.post(
-        `${config.TOKENS_URL}/upload-file`,
+        `${config.TOKENS_URL}/upload-final-documents`,
         formData,
         {
           headers: {
