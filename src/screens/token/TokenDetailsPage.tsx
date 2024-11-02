@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {ScrollView, Text} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, Text, ActivityIndicator } from 'react-native';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
 import TokenInfo from './TokenInfo';
@@ -9,7 +9,7 @@ import UploadRevisedDraftForm from './UploadRevisedDraftForm';
 import AddAppointmentForm from './AddAppointmentForm';
 import DocToBeSubmittedForm from './DocToBeSubmittedForm';
 import DocumentToBeCheckedForm from './DocumentToBeCheckedForm';
-import {useRoute} from '@react-navigation/native'; // Import useRoute
+import { useRoute } from '@react-navigation/native'; // Import useRoute
 
 interface Token {
   token_id: number;
@@ -22,6 +22,12 @@ interface Token {
   customer_mobile: string;
 }
 
+interface DocumentFile {
+  uri: string;
+  type: string;
+  name: string;
+}
+
 const TokenDetailsPage = () => {
   const route = useRoute(); // Using useRoute to get the route params
   const {token_id} = route.params as {token_id: number}; // Extract token_id from route params
@@ -30,8 +36,16 @@ const TokenDetailsPage = () => {
   const [currentForm, setCurrentForm] = useState<string>(''); // State to track the current form
   const [amount, setAmount] = useState('');
   const [governmentFee, setGovernmentFee] = useState('');
-  const [checkedFile, setCheckedFile] = useState<any>(null); // State for handling the checked document file
-  const [draftFile, setDraftFile] = useState<any>(null); // State for handling the checked document file
+  const [checkedFile, setCheckedFile] = useState<DocumentFile | null>(null); // State for handling the checked document file
+  const [draftFile, setDraftFile] = useState<DocumentFile | null>(null); // State for handling the draft document
+
+  // New states for different document types
+  const [challanFile, setChallanFile] = useState<DocumentFile | null>(null);
+  const [mainDocFile, setMainDocFile] = useState<DocumentFile | null>(null);
+  const [index2File, setIndex2File] = useState<DocumentFile | null>(null);
+  const [policeVerificationFile, setPoliceVerificationFile] = useState<DocumentFile | null>(null); // Optional
+
+  const [loading, setLoading] = useState(true); // Loading state
 
   useEffect(() => {
     const fetchTokenDetails = async () => {
@@ -43,6 +57,9 @@ const TokenDetailsPage = () => {
         setCurrentForm(response.data.status); // Set initial form based on token status
       } catch (error) {
         console.error('Error fetching token details:', error);
+        // Optionally set an error state here to inform the user
+      } finally {
+        setLoading(false); // Set loading to false after fetching
       }
     };
 
@@ -100,8 +117,14 @@ const TokenDetailsPage = () => {
         return (
           <DocumentToBeCheckedForm
             tokenID={token.token_id}
-            checkedFile={checkedFile}
-            setCheckedFile={setCheckedFile}
+            challanFile={challanFile} // Pass challan file state
+            setChallanFile={setChallanFile}
+            mainDocFile={mainDocFile} // Pass main document file state
+            setMainDocFile={setMainDocFile}
+            index2File={index2File} // Pass Index 2 file state
+            setIndex2File={setIndex2File}
+            policeVerificationFile={policeVerificationFile} // Optional police verification
+            setPoliceVerificationFile={setPoliceVerificationFile}
             setCurrentForm={setCurrentForm}
           />
         );
@@ -109,6 +132,10 @@ const TokenDetailsPage = () => {
         return <Text>No specific form for this status.</Text>;
     }
   };
+
+  if (loading) {
+    return <ActivityIndicator size="large" color="#0000ff" />; // Show a loading spinner
+  }
 
   if (!token) {
     return <Text>Loading...</Text>;

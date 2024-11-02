@@ -1,32 +1,65 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, Alert} from 'react-native';
 import {Card, Title, Button} from 'react-native-paper';
 import DocumentPicker from 'react-native-document-picker';
 import axiosInstance from '../../axiosInstance';
 import config from '../../config';
-import {useNavigation} from '@react-navigation/native'; // Import useNavigation
+import {useNavigation} from '@react-navigation/native';
+
+// Define the DocumentFile interface for type safety
+interface DocumentFile {
+  uri: string;
+  type: string;
+  name: string;
+}
 
 interface DocumentToBeCheckedFormProps {
-  checkedFile: any;
-  setCheckedFile: (file: any) => void;
   tokenID: number;
-  setCurrentForm: (form: string) => void; // Add setCurrentForm prop
+  challanFile: DocumentFile | null; // Ensure this is DocumentFile or null
+  setChallanFile: React.Dispatch<React.SetStateAction<DocumentFile | null>>;
+  mainDocFile: DocumentFile | null;
+  setMainDocFile: React.Dispatch<React.SetStateAction<DocumentFile | null>>;
+  index2File: DocumentFile | null;
+  setIndex2File: React.Dispatch<React.SetStateAction<DocumentFile | null>>;
+  policeVerificationFile: DocumentFile | null; // Optional
+  setPoliceVerificationFile: React.Dispatch<
+    React.SetStateAction<DocumentFile | null>
+  >;
+  setCurrentForm: (form: string) => void;
 }
 
 const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
-  checkedFile,
-  setCheckedFile,
   tokenID,
-  setCurrentForm, // Destructure setCurrentForm
+  challanFile,
+  setChallanFile,
+  mainDocFile,
+  setMainDocFile,
+  index2File,
+  setIndex2File,
+  policeVerificationFile,
+  setPoliceVerificationFile,
+  setCurrentForm,
 }) => {
   const navigation = useNavigation<any>(); // Typed useNavigation
+  const [draftFile, setDraftFile] = useState<DocumentFile | null>(null); // State for handling the draft document
 
-  const handleDocumentPick = async () => {
+  const handleDocumentPick = async (
+    setFile: React.Dispatch<React.SetStateAction<DocumentFile | null>>,
+    title: string,
+  ) => {
     try {
       const result = await DocumentPicker.pick({
         type: [DocumentPicker.types.images, DocumentPicker.types.allFiles],
       });
-      setCheckedFile(result[0]); // Set the selected file (first file in the array)
+
+      // Map the response to DocumentFile type
+      const selectedFile: DocumentFile = {
+        uri: result[0].uri,
+        type: result[0].type || 'application/octet-stream', // Default type if null
+        name: result[0].name || 'Unnamed Document', // Default name if null
+      };
+
+      setFile(selectedFile);
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User cancelled the picker');
@@ -37,19 +70,41 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
   };
 
   const handleFileUpload = async () => {
-    if (!checkedFile) {
-      Alert.alert('No file selected');
-      return;
-    }
-
     const formData = new FormData();
     formData.append('tokenID', String(tokenID));
     formData.append('documentType', 'Final Document');
-    formData.append('files', {
-      uri: checkedFile.uri,
-      type: checkedFile.type,
-      name: checkedFile.name,
-    });
+
+    if (challanFile) {
+      formData.append('challan', {
+        uri: challanFile.uri,
+        type: challanFile.type,
+        name: challanFile.name,
+      });
+    }
+
+    if (mainDocFile) {
+      formData.append('mainDocument', {
+        uri: mainDocFile.uri,
+        type: mainDocFile.type,
+        name: mainDocFile.name,
+      });
+    }
+
+    if (index2File) {
+      formData.append('index2', {
+        uri: index2File.uri,
+        type: index2File.type,
+        name: index2File.name,
+      });
+    }
+
+    if (policeVerificationFile) {
+      formData.append('policeVerification', {
+        uri: policeVerificationFile.uri,
+        type: policeVerificationFile.type,
+        name: policeVerificationFile.name,
+      });
+    }
 
     try {
       const response = await axiosInstance.post(
@@ -63,15 +118,11 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
       );
 
       if (response.status === 200) {
-        Alert.alert('Document uploaded successfully');
-
-        // Navigate to the main dashboard
-        navigation.navigate('DashboardMain'); // Assuming your dashboard route is named 'Dashboard'
-
-        console.log('Form switched to Completed');
+        Alert.alert('Documents uploaded successfully');
+        navigation.navigate('DashboardMain');
       }
     } catch (error) {
-      console.error('Error uploading document:', error);
+      console.error('Error uploading documents:', error);
       Alert.alert('Document upload failed');
     }
   };
@@ -83,18 +134,50 @@ const DocumentToBeCheckedForm: React.FC<DocumentToBeCheckedFormProps> = ({
 
         <Button
           mode="outlined"
-          onPress={handleDocumentPick}
+          onPress={() => handleDocumentPick(setChallanFile, 'Challan Document')}
           style={styles.uploadButton}>
-          {checkedFile ? 'Change Checked Document' : 'Upload Checked Document'}
+          {challanFile ? 'Change Challan Document' : 'Upload Challan Document'}
         </Button>
+        {challanFile && <Text style={styles.fileName}>{challanFile.name}</Text>}
 
-        {checkedFile && <Text style={styles.fileName}>{checkedFile.name}</Text>}
+        <Button
+          mode="outlined"
+          onPress={() => handleDocumentPick(setMainDocFile, 'Main Document')}
+          style={styles.uploadButton}>
+          {mainDocFile ? 'Change Main Document' : 'Upload Main Document'}
+        </Button>
+        {mainDocFile && <Text style={styles.fileName}>{mainDocFile.name}</Text>}
+
+        <Button
+          mode="outlined"
+          onPress={() => handleDocumentPick(setIndex2File, 'Index 2 Document')}
+          style={styles.uploadButton}>
+          {index2File ? 'Change Index 2 Document' : 'Upload Index 2 Document'}
+        </Button>
+        {index2File && <Text style={styles.fileName}>{index2File.name}</Text>}
+
+        <Button
+          mode="outlined"
+          onPress={() =>
+            handleDocumentPick(
+              setPoliceVerificationFile,
+              'Police Verification (Optional)',
+            )
+          }
+          style={styles.uploadButton}>
+          {policeVerificationFile
+            ? 'Change Police Verification (Optional)'
+            : 'Upload Police Verification (Optional)'}
+        </Button>
+        {policeVerificationFile && (
+          <Text style={styles.fileName}>{policeVerificationFile.name}</Text>
+        )}
 
         <Button
           mode="contained"
           onPress={handleFileUpload}
           style={styles.submitButton}>
-          Submit Checked Document
+          Submit Documents
         </Button>
       </Card.Content>
     </Card>
